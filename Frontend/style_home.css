@@ -1,0 +1,126 @@
+/* ---- DASHBOARD CONTAINER ---- */
+.dashboard-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ---- SIDEBAR ---- */
+.sidebar {
+  width: 250px;
+  background: #121212;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 15px 20px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar ul li a i {
+  margin-right: 10px;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: #008cba;
+  border-radius: 5px;
+}
+
+/* ---- MAIN CONTENT ---- */
+.main-content {
+  flex: 1;
+  background: #1c1c1c;
+  padding: 30px;
+  color: white;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+.btn-add {
+  padding: 10px 15px;
+  background: #00bfff;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  background: #008cba;
+}
+
+/* ---- ACCOUNT LIST ---- */
+.password-list {
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.accounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.account-card {
+  background: #333;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.account-card:hover {
+  background: #008cba;
+}
+
+.site-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-info p {
+  color: #bbb;
+  font-size: 0.9em;
+}

@@ -1,0 +1,59 @@
+<?php
+session_start();
+
+// Generate CSRF token if it doesn't exist
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GateKeep - Login</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section>
+      <div class="register-box">
+        <!-- Using the same container for consistency -->
+        <h2>Login to GateKeep</h2>
+        <form action="login_handler.php" method="POST">
+          <!-- CSRF Protection -->
+          <input
+            type="hidden"
+            name="csrf_token"
+            value="<?php echo $_SESSION['csrf_token']; ?>"
+          />
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Master Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Master Password"
+              required
+            />
+          </div>
+          <button type="submit" name="login" class="btn">Login</button>
+        </form>
+        <div class="link">
+          <a href="register.html">Don't have an account? Register here.</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

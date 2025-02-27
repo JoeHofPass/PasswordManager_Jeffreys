@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GateKeep - Dashboard</title>
+    <link rel="stylesheet" href="style_home.css" />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">🔒 <strong>GATEKEEP</strong></div>
+        <ul>
+          <li>
+            <a href="home.php" class="active"
+              ><i class="fas fa-key"></i> Passwords</a
+            >
+          </li>
+          <li>
+            <a href="#"
+              ><i class="fas fa-exclamation-triangle"></i> Security Alerts</a
+            >
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trash"></i> Deleted</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-user"></i> Account</a>
+          </li>
+          <li>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <header>
+          <h2>Passwords</h2>
+          <button class="btn-add" onclick="addNewPassword()">
+            + ADD NEW PASSWORD
+          </button>
+        </header>
+
+        <section class="password-list">
+          <h3>Accounts</h3>
+          <div class="accounts">
+            <?php if (count($accounts) >
+            0): ?>
+            <?php foreach ($accounts as $account): ?>
+            <div class="account-card">
+              <img
+                src="https://www.google.com/s2/favicons?domain=<?php echo $account['site_url']; ?>"
+                alt="logo"
+                class="site-logo"
+              />
+              <div class="account-info">
+                <strong><?php echo ucfirst($account['site_name']); ?></strong>
+                <p><?php echo $account['email']; ?></p>
+              </div>
+            </div>
+            <?php endforeach; ?>
+            <?php else: ?>
+            <p>No saved passwords yet. Add one now!</p>
+            <?php endif; ?>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      function addNewPassword() {
+        window.location.href = "add_password.php";
+      }
+    </script>
+  </body>
+</html>
