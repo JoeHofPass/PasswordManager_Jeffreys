@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GateKeep - Security Alerts</title>
+    <link rel="stylesheet" href="style_home.css" />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">
+          <img src="gatekeep4.png" alt="GateKeep Logo" class="logo-img" />
+        </div>
+        <ul>
+          <li>
+            <a href="home.html"><i class="fas fa-key"></i> Passwords</a>
+          </li>
+          <li>
+            <a href="alerts.html" class="active" id="securityAlerts"
+              ><i class="fas fa-exclamation-triangle"></i> Security Alerts</a
+            >
+          </li>
+          <li>
+            <a href="deletedPasswords.html"
+              ><i class="fas fa-trash"></i> Deleted</a
+            >
+          </li>
+          <li>
+            <a href="account.html"><i class="fas fa-user"></i> Account</a>
+          </li>
+          <li>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <header>
+          <h2>Security Alerts</h2>
+        </header>
+
+        <!-- Security Alerts Section -->
+        <section class="alerts-section">
+          <h3>Detected Vulnerabilities</h3>
+          <div id="alertMessages">
+            <!-- JavaScript will insert alerts here -->
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="alerts.js"></script>
+  </body>
+</html>

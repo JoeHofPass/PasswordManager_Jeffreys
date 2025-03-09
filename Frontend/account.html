@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GateKeep - Account</title>
+    <link rel="stylesheet" href="style_home.css" />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">
+          <img src="gatekeep4.png" alt="GateKeep Logo" class="logo-img" />
+        </div>
+        <ul>
+          <li>
+            <a href="home.html"><i class="fas fa-key"></i> Passwords</a>
+          </li>
+          <li>
+            <a href="alerts.html"
+              ><i class="fas fa-exclamation-triangle"></i> Security Alerts</a
+            >
+          </li>
+          <li>
+            <a href="deletedPasswords.html"
+              ><i class="fas fa-trash"></i> Deleted</a
+            >
+          </li>
+          <li>
+            <a href="account.html" class="active"
+              ><i class="fas fa-user"></i> Account</a
+            >
+          </li>
+          <li>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <header>
+          <h2>My Account</h2>
+        </header>
+
+        <!-- Account Info Section -->
+        <section class="account-section">
+          <h3>Account Details</h3>
+          <div class="account-info-box">
+            <p>
+              <strong>Username:</strong>
+              <span id="accountUsername">JohnDoe</span>
+            </p>
+            <p>
+              <strong>Email:</strong>
+              <span id="accountEmail">johndoe@example.com</span>
+            </p>
+            <p>
+              <strong>Account Status:</strong>
+              <span id="accountStatus" class="status-active">Active</span>
+            </p>
+          </div>
+        </section>
+
+        <!-- Terms and Conditions -->
+        <section class="terms-section">
+          <h3>Terms and Conditions</h3>
+          <p>
+            By using GateKeep, you agree to the secure handling of your
+            credentials. GateKeep ensures encrypted password management, but
+            users are responsible for maintaining strong credentials.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <script src="account.js"></script>
+  </body>
+</html>

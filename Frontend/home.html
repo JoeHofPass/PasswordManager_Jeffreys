@@ -12,25 +12,28 @@
   </head>
   <body>
     <div class="dashboard-container">
-      <!-- Sidebar -->
       <div class="sidebar">
-        <div class="logo">🔒 <strong>GATEKEEP</strong></div>
+        <div class="logo">
+          <img src="gatekeep4.png" alt="GateKeep Logo" class="logo-img" />
+        </div>
         <ul>
           <li>
-            <a href="home.php" class="active"
+            <a href="home.html" class="active"
               ><i class="fas fa-key"></i> Passwords</a
             >
           </li>
           <li>
-            <a href="#"
+            <a href="alerts.html" id="securityAlerts"
               ><i class="fas fa-exclamation-triangle"></i> Security Alerts</a
             >
           </li>
           <li>
-            <a href="#"><i class="fas fa-trash"></i> Deleted</a>
+            <a href="deletedPasswords.html"
+              ><i class="fas fa-trash"></i> Deleted</a
+            >
           </li>
           <li>
-            <a href="#"><i class="fas fa-user"></i> Account</a>
+            <a href="account.html"><i class="fas fa-user"></i> Account</a>
           </li>
           <li>
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -38,45 +41,95 @@
         </ul>
       </div>
 
-      <!-- Main Content -->
       <div class="main-content">
         <header>
           <h2>Passwords</h2>
-          <button class="btn-add" onclick="addNewPassword()">
+          <input type="text" id="searchBar" placeholder="Search passwords..." />
+          <button class="btn-add" onclick="openPasswordPopup()">
             + ADD NEW PASSWORD
           </button>
         </header>
 
+        <!-- Password List -->
         <section class="password-list">
-          <h3>Accounts</h3>
-          <div class="accounts">
-            <?php if (count($accounts) >
-            amazon.com
-            <?php foreach ($accounts as $account): ?>
+          <h3>Stored Passwords</h3>
+          <div class="accounts" id="accountList">
             <div class="account-card">
               <img
-                src="https://pngimg.com/uploads/amazon/amazon_PNG13.png"
-                alt="logo"
+                src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
+                alt="Amazon"
                 class="site-logo"
               />
               <div class="account-info">
-                <strong><?php echo ucfirst($account['site_name']); ?></strong>
-                <p><?php echo $account['email']; ?></p>
+                <strong>Amazon</strong>
+                <p>user@example.com</p>
+                <div class="password-container">
+                  <input
+                    type="password"
+                    value="MySecurePass123!"
+                    class="password-field"
+                    readonly
+                  />
+                  <button
+                    class="toggle-password"
+                    onclick="togglePassword(this)"
+                  >
+                    👁
+                  </button>
+                </div>
               </div>
             </div>
-            <?php endforeach; ?>
-            <?php else: ?>
-            <p>No saved passwords yet. Add one now!</p>
-            <?php endif; ?>
+
+            <div class="account-card">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google.png"
+                alt="Google"
+                class="site-logo"
+              />
+              <div class="account-info">
+                <strong>Google</strong>
+                <p>john.doe@gmail.com</p>
+                <div class="password-container">
+                  <input
+                    type="password"
+                    value="AnotherSecurePass!"
+                    class="password-field"
+                    readonly
+                  />
+                  <button
+                    class="toggle-password"
+                    onclick="togglePassword(this)"
+                  >
+                    👁
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
     </div>
 
-    <script>
-      function addNewPassword() {
-        window.location.href = "add_password.php";
-      }
-    </script>
+    <!-- Modern Pop-up Window -->
+    <div id="passwordPopup" class="popup">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePasswordPopup()">×</span>
+        <h2>Add a New Password</h2>
+        <label>Website/App Name:</label>
+        <input type="text" id="siteName" required />
+        <label>Email/Username:</label>
+        <input type="email" id="userEmail" required />
+        <label>Password:</label>
+        <input type="text" id="generatedPassword" />
+        <button class="btn-generate" onclick="generatePassword()">
+          Generate Password
+        </button>
+        <button class="btn-save" onclick="saveNewPassword()">
+          Save New Password
+        </button>
+      </div>
+    </div>
+
+    <script src="dashboard.js"></script>
   </body>
 </html>
