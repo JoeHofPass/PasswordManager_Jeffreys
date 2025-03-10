@@ -3,207 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GateKeep - Dashboard</title>
-    <script
-      src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"
-    ></script>
-    <style>
-      /* ---- DASHBOARD CONTAINER ---- */
-      .dashboard-container {
-        display: flex;
-        width: 100vw;
-        height: 100vh;
-        background: #1c1c1c;
-        color: white;
-        font-family: Arial, sans-serif;
-      }
-
-      /* ---- SIDEBAR ---- */
-      .sidebar {
-        width: 250px;
-        background: #121212;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        padding-top: 20px;
-      }
-
-      .sidebar .logo {
-        text-align: center;
-        font-size: 1.5em;
-        font-weight: bold;
-        padding-bottom: 20px;
-      }
-
-      .sidebar ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      .sidebar ul li {
-        padding: 15px 20px;
-      }
-
-      .sidebar ul li a {
-        text-decoration: none;
-        color: white;
-        font-size: 1.1em;
-        display: flex;
-        align-items: center;
-      }
-
-      .sidebar ul li a i {
-        margin-right: 10px;
-      }
-
-      .sidebar ul li a:hover,
-      .sidebar ul li a.active {
-        background: #008cba;
-        border-radius: 5px;
-      }
-
-      /* ---- MAIN CONTENT ---- */
-      .main-content {
-        flex: 1;
-        background: #1c1c1c;
-        padding: 30px;
-        color: white;
-        overflow-y: auto;
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      h2 {
-        font-size: 2em;
-      }
-
-      .btn-add {
-        padding: 10px 15px;
-        background: #00bfff;
-        color: black;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .btn-add:hover {
-        background: #008cba;
-      }
-
-      /* ---- SEARCH BAR ---- */
-      #search-bar {
-        width: 300px;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        font-size: 1em;
-      }
-
-      /* ---- PASSWORD LIST ---- */
-      .password-list {
-        background: #222;
-        padding: 20px;
-        border-radius: 10px;
-      }
-
-      .accounts {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-      }
-
-      .account-card {
-        background: #333;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        transition: 0.3s;
-      }
-
-      .account-card:hover {
-        background: #008cba;
-      }
-
-      .password-field {
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 1em;
-        text-align: center;
-      }
-
-      .password-field:focus {
-        outline: none;
-      }
-
-      /* ---- MODAL ---- */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-content {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        width: 400px;
-      }
-    </style>
+    <title>GateKeep - Login</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="dashboard-container">
-      <div class="sidebar">
-        <div class="logo">🔒 <strong>GATEKEEP</strong></div>
+    <section>
+      <div class="register-box">
+        <!-- Using the same container for consistency -->
+        <h2>Login</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password"> Master Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Master Password"
+              required
+            />
+          </div>
+          <button type="submit" name="login" class="btn">Login</button>
+        </form>
+        <!--<div class="link">
+          <a href="register.html">Don't have an account? Register here.</a>
+          <a href="home.html">Home Screen.</a>
+        </div>-->
       </div>
-      <div class="main-content">
-        <header>
-          <h2>Passwords</h2>
-          <input
-            type="text"
-            id="search-bar"
-            placeholder="Search passwords..."
-          />
-          <button class="btn-add" onclick="openAddPasswordModal()">
-            + ADD NEW PASSWORD
-          </button>
-        </header>
-      </div>
-    </div>
-    <script>
-      function openAddPasswordModal() {
-        document.getElementById("add-password-modal").style.display = "flex";
-      }
-      function closeAddPasswordModal() {
-        document.getElementById("add-password-modal").style.display = "none";
-      }
-      function generatePassword() {
-        let charset =
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-        let password = "";
-        for (let i = 0; i < 12; i++) {
-          password += charset.charAt(
-            Math.floor(Math.random() * charset.length)
-          );
-        }
-        document.getElementById("generated-password").value = password;
-      }
-    </script>
+    </section>
+    <script src="renderer.js"></script>
   </body>
 </html>
