@@ -1,20 +1,47 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const searchBar = document.getElementById("searchBar");
+function openPasswordPopup() {
+  document.getElementById("passwordPopup").style.display = "block";
+}
 
-  searchBar.addEventListener("input", function () {
-    let filter = searchBar.value.toLowerCase();
-    let cards = document.querySelectorAll(".account-card");
+function closePasswordPopup() {
+  document.getElementById("passwordPopup").style.display = "none";
+}
 
-    cards.forEach((card) => {
-      let siteName = card.querySelector("strong").innerText.toLowerCase();
-      let userEmail = card.querySelector("p").innerText.toLowerCase();
+function generatePassword() {
+  const length = 16;
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  document.getElementById("generatedPassword").value = password;
+}
 
-      // Show only cards that match the search term
-      if (siteName.includes(filter) || userEmail.includes(filter)) {
-        card.style.display = "flex"; // Show matching results
-      } else {
-        card.style.display = "none"; // Hide non-matching results
-      }
-    });
-  });
-});
+function saveNewPassword() {
+  const siteName = document.getElementById("siteName").value;
+  const userEmail = document.getElementById("userEmail").value;
+  const password = document.getElementById("generatedPassword").value;
+
+  if (!siteName || !userEmail || !password) {
+    alert("All fields are required!");
+    return;
+  }
+
+  const accountList = document.getElementById("accountList");
+  const newAccount = document.createElement("div");
+  newAccount.classList.add("account-card");
+  newAccount.innerHTML = `
+        <img src="default_logo.png" alt="logo" class="site-logo" />
+        <div class="account-info">
+            <strong>${siteName}</strong>
+            <p>${userEmail}</p>
+            <div class="password-container">
+                <input type="password" value="${password}" class="password-field" readonly />
+                <button class="toggle-password" onclick="togglePassword(this)">👁</button>
+            </div>
+        </div>
+    `;
+
+  accountList.appendChild(newAccount);
+  closePasswordPopup();
+}
