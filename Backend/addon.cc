@@ -29,4 +29,4 @@ Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
     exports.Set("verifyUser", Napi::Function::New(credentials, VerifyUser));
     return exports;
 }
-NODE_API_MODULE(addon, Init)
+NODE_API_MODULE(addon, Init);

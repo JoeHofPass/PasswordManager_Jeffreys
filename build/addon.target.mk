@@ -54,6 +54,8 @@ INCS_Debug := \
 	-I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/deps/zlib \
 	-I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/deps/v8/include \
 	-I/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/node_modules/node-addon-api \
+	-I/opt/homebrew/Cellar/libsodium/1.0.20/include \
+	-I/opt/homebrew/Cellar/postgresql@17/17.4/include \
 	-I/opt/homebrew/include \
 	-I$(srcdir)/node_modules/node-addon-api
 
@@ -108,11 +110,15 @@ INCS_Release := \
 	-I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/deps/zlib \
 	-I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/deps/v8/include \
 	-I/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/node_modules/node-addon-api \
+	-I/opt/homebrew/Cellar/libsodium/1.0.20/include \
+	-I/opt/homebrew/Cellar/postgresql@17/17.4/include \
 	-I/opt/homebrew/include \
 	-I$(srcdir)/node_modules/node-addon-api
 
 OBJS := \
-	$(obj).target/$(TARGET)/backend/addon.o
+	$(obj).target/$(TARGET)/backend/addon.o \
+	$(obj).target/$(TARGET)/backend/DBconnection.o \
+	$(obj).target/$(TARGET)/backend/passwordHash.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)
@@ -133,12 +139,21 @@ $(OBJS): GYP_OBJCXXFLAGS := $(DEFS_$(BUILDTYPE)) $(INCS_$(BUILDTYPE))  $(CFLAGS_
 $(obj).$(TOOLSET)/$(TARGET)/%.o: $(srcdir)/%.cc FORCE_DO_CMD
 	@$(call do_cmd,cxx,1)
 
+$(obj).$(TOOLSET)/$(TARGET)/%.o: $(srcdir)/%.cpp FORCE_DO_CMD
+	@$(call do_cmd,cxx,1)
+
 # Try building from generated source, too.
 
 $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj).$(TOOLSET)/%.cc FORCE_DO_CMD
 	@$(call do_cmd,cxx,1)
 
+$(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj).$(TOOLSET)/%.cpp FORCE_DO_CMD
+	@$(call do_cmd,cxx,1)
+
 $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cc FORCE_DO_CMD
+	@$(call do_cmd,cxx,1)
+
+$(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cpp FORCE_DO_CMD
 	@$(call do_cmd,cxx,1)
 
 # End of this set of suffix rules
@@ -170,7 +185,8 @@ LIBTOOLFLAGS_Release := \
 	-Wl,-search_paths_first
 
 LIBS := \
-	-lc++
+	/opt/homebrew/Cellar/postgresql@17/17.4/lib/postgresql/libpq.a \
+	/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.a
 
 $(builddir)/addon.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(builddir)/addon.node: LIBS := $(LIBS)

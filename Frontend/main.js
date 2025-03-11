@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const addon = require("../build/Release/addon.node");
 
@@ -8,28 +8,37 @@ function createWindow () {
       width: 1000,
       height: 1000,
       webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
+        contextIsolation: true
       }
     });
-    //mainWindow.webContents.openDevTools();
-  
-    mainWindow.loadFile('login.html')
+    mainWindow.webContents.openDevTools();
+
+    
+    mainWindow.loadFile('login.html');
   }
 
   ipcMain.on('login', (event, {email, password}) => {
-    const NEWUSER = addon.verifyUser(email,password);
-    event.reply('login-response', NEWUSER ? 'success' : 'fail');
+    try {
+      console.log(addon);
+      const NEWUSER = addon.verifyUser(email,password);
+      event.reply('login-response', NEWUSER ? 'success' : 'fail');
+    } catch (error) {
+      console.error("native module crashed:", error);
+      event.reply("login-reponse", "error");
+    }
+    
   });
 
   app.whenReady().then(() => {
-    createWindow()
+    createWindow();
 
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-  })
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    });
+  });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-})
+    if (process.platform !== 'darwin') app.quit();
+});

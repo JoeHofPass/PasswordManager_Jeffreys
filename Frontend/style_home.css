@@ -38,6 +38,8 @@ html {
 
 .logo-img {
   width: 150px;
+  border: solid 1px;
+  border-radius: 50%;
 }
 
 .sidebar ul {

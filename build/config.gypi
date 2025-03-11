@@ -490,10 +490,10 @@
     "globalconfig": "/opt/homebrew/etc/npmrc",
     "userconfig": "/Users/yashpatel/.npmrc",
     "init_module": "/Users/yashpatel/.npm-init.js",
-    "npm_version": "10.9.2",
+    "npm_version": "11.2.0",
     "node_gyp": "/opt/homebrew/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
     "cache": "/Users/yashpatel/.npm",
-    "user_agent": "npm/10.9.2 node/v23.9.0 darwin arm64 workspaces/false",
+    "user_agent": "npm/11.2.0 node/v23.9.0 darwin arm64 workspaces/false",
     "prefix": "/opt/homebrew"
   }
 }
