@@ -13,27 +13,35 @@ function createWindow () {
         contextIsolation: true
       }
     });
-    mainWindow.webContents.openDevTools();
-
-    
+    //mainWindow.webContents.openDevTools();
     mainWindow.loadFile('login.html');
+    mainWindow.webContents.on('did-fail-load', () => {
+      console.log("Page loaded: ", mainWindow.webContents.getURL());
+    });
   }
 
   ipcMain.on('login', (event, {email, password}) => {
     try {
-      console.log(addon);
       const NEWUSER = addon.verifyUser(email,password);
-      event.reply('login-response', NEWUSER ? 'success' : 'fail');
+      event.reply("login-response", NEWUSER === "1" ? "success" : "fail");
     } catch (error) {
       console.error("native module crashed:", error);
       event.reply("login-reponse", "error");
     }
-    
+  });
+
+  ipcMain.on('register', (event, {fullname, email, password}) => {
+    try {
+      const NEWUSER = addon.newUser(fullname, email, password);
+      event.reply("register-response", NEWUSER === "1" ? "success" : "fail");
+    } catch (error) {
+      console.error("native module crashed:", error);
+      event.reply("register-response", "error");
+    }
   });
 
   app.whenReady().then(() => {
     createWindow();
-
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });

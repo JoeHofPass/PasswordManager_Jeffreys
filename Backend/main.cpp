@@ -8,7 +8,7 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
-    newUser("example2@gmail.com", "abc123");
-    verifyUser("example@gmail.com", "abc123");
+    newUser("john smith","testuser2@gmail.com", "password1234");
+    //verifyUser("example@gmail.com", "abc123");
     return 0;
 }

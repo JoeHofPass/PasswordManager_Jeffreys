@@ -11,6 +11,8 @@ DEFS_Debug := \
 	'-D_DARWIN_USE_64_BIT_INODE=1' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-DOPENSSL_NO_PINSHARED' \
+	'-DOPENSSL_THREADS' \
 	'-DNODE_ADDON_API_CPP_EXCEPTIONS_ALL' \
 	'-DNAPI_CPP_EXCEPTIONS' \
 	'-DBUILDING_NODE_EXTENSION' \
@@ -68,6 +70,8 @@ DEFS_Release := \
 	'-D_DARWIN_USE_64_BIT_INODE=1' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-DOPENSSL_NO_PINSHARED' \
+	'-DOPENSSL_THREADS' \
 	'-DNODE_ADDON_API_CPP_EXCEPTIONS_ALL' \
 	'-DNAPI_CPP_EXCEPTIONS' \
 	'-DBUILDING_NODE_EXTENSION'
@@ -77,7 +81,6 @@ CFLAGS_Release := \
 	-O3 \
 	-gdwarf-2 \
 	-fno-strict-aliasing \
-	-flto \
 	-mmacosx-version-min=10.7 \
 	-arch \
 	arm64 \
@@ -118,7 +121,8 @@ INCS_Release := \
 OBJS := \
 	$(obj).target/$(TARGET)/backend/addon.o \
 	$(obj).target/$(TARGET)/backend/DBconnection.o \
-	$(obj).target/$(TARGET)/backend/passwordHash.o
+	$(obj).target/$(TARGET)/backend/passwordHash.o \
+	$(obj).target/$(TARGET)/backend/main.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)
@@ -185,8 +189,11 @@ LIBTOOLFLAGS_Release := \
 	-Wl,-search_paths_first
 
 LIBS := \
-	/opt/homebrew/Cellar/postgresql@17/17.4/lib/postgresql/libpq.a \
-	/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.a
+	-L/opt/homebrew/opt/libpq/lib \
+	-lpq \
+	-L/opt/homebrew/Cellar/libsodium/1.0.20/lib \
+	-lsodium \
+	-lc++
 
 $(builddir)/addon.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(builddir)/addon.node: LIBS := $(LIBS)

@@ -148,10 +148,10 @@ cmd_pch_mm = $(CC.$(TOOLSET)) $(GYP_PCH_OBJCXXFLAGS) $(DEPFLAGS) -c -o $@ $<
 # Use $(4) for the command, since $(2) and $(3) are used as flag by do_cmd
 # already.
 quiet_cmd_mac_tool = MACTOOL $(4) $<
-cmd_mac_tool = /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 gyp-mac-tool $(4) $< "$@"
+cmd_mac_tool = ./gyp-mac-tool $(4) $< "$@"
 
 quiet_cmd_mac_package_framework = PACKAGE FRAMEWORK $@
-cmd_mac_package_framework = /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 gyp-mac-tool package-framework "$@" $(4)
+cmd_mac_package_framework = ./gyp-mac-tool package-framework "$@" $(4)
 
 quiet_cmd_infoplist = INFOPLIST $@
 cmd_infoplist = $(CC.$(TOOLSET)) -E -P -Wno-trigraphs -x c $(INFOPLIST_DEFINES) "$<" -o "$@"
@@ -167,7 +167,7 @@ quiet_cmd_symlink = SYMLINK $@
 cmd_symlink = ln -sf "$<" "$@"
 
 quiet_cmd_alink = LIBTOOL-STATIC $@
-cmd_alink = rm -f $@ && /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 gyp-mac-tool filter-libtool libtool $(GYP_LIBTOOLFLAGS) -static -o $@ $(filter %.o,$^)
+cmd_alink = rm -f $@ && ./gyp-mac-tool filter-libtool libtool $(GYP_LIBTOOLFLAGS) -static -o $@ $(filter %.o,$^)
 
 quiet_cmd_link = LINK($(TOOLSET)) $@
 cmd_link = $(LINK.$(TOOLSET)) $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o "$@" $(LD_INPUTS) $(LIBS)
@@ -351,8 +351,8 @@ ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@
-cmd_regen_makefile = cd $(srcdir); /Users/yashpatel/.npm/_npx/c463d28440264a05/node_modules/node-gyp/gyp/gyp_main.py -fmake --ignore-environment "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/Users/yashpatel/Library/Caches/node-gyp/23.9.0" "-Dnode_gyp_dir=/Users/yashpatel/.npm/_npx/c463d28440264a05/node_modules/node-gyp" "-Dnode_lib_file=/Users/yashpatel/Library/Caches/node-gyp/23.9.0/<(target_arch)/node.lib" "-Dmodule_root_dir=/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys" "-Dnode_engine=v8" "--depth=." "-Goutput_dir=." "--generator-output=build" -I/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/build/config.gypi -I/Users/yashpatel/.npm/_npx/c463d28440264a05/node_modules/node-gyp/addon.gypi -I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/include/node/common.gypi "--toplevel-dir=." binding.gyp
-Makefile: $(srcdir)/node_modules/node-addon-api/except.gypi $(srcdir)/node_modules/node-addon-api/node_addon_api.gyp $(srcdir)/binding.gyp $(srcdir)/build/config.gypi $(srcdir)/../../../.npm/_npx/c463d28440264a05/node_modules/node-gyp/addon.gypi $(srcdir)/../../../Library/Caches/node-gyp/23.9.0/include/node/common.gypi $(srcdir)/node_modules/node-addon-api/noexcept.gypi
+cmd_regen_makefile = cd $(srcdir); /Users/yashpatel/.nvm/versions/node/v23.9.0/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py -fmake --ignore-environment "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/Users/yashpatel/Library/Caches/node-gyp/23.9.0" "-Dnode_gyp_dir=/Users/yashpatel/.nvm/versions/node/v23.9.0/lib/node_modules/npm/node_modules/node-gyp" "-Dnode_lib_file=/Users/yashpatel/Library/Caches/node-gyp/23.9.0/<(target_arch)/node.lib" "-Dmodule_root_dir=/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys" "-Dnode_engine=v8" "--depth=." "-Goutput_dir=." "--generator-output=build" -I/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/build/config.gypi -I/Users/yashpatel/.nvm/versions/node/v23.9.0/lib/node_modules/npm/node_modules/node-gyp/addon.gypi -I/Users/yashpatel/Library/Caches/node-gyp/23.9.0/include/node/common.gypi "--toplevel-dir=." binding.gyp
+Makefile: $(srcdir)/binding.gyp $(srcdir)/node_modules/node-addon-api/node_addon_api.gyp $(srcdir)/../../../Library/Caches/node-gyp/23.9.0/include/node/common.gypi $(srcdir)/node_modules/node-addon-api/except.gypi $(srcdir)/build/config.gypi $(srcdir)/../../../.nvm/versions/node/v23.9.0/lib/node_modules/npm/node_modules/node-gyp/addon.gypi $(srcdir)/node_modules/node-addon-api/noexcept.gypi
 	$(call do_cmd,regen_makefile)
 
 # "all" is a concatenation of the "all" targets from all the included

@@ -3,11 +3,10 @@
     {
       'target_name': "addon",
       "sources": [
-        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp"
+        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp", "backend/main.cpp"
       ],
       "cflags": ["-std=c++17"],
       "ldflags": ["-stdlib=libc++"],
-      "libraries": ["-lc++"],
 
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")", 
@@ -16,13 +15,18 @@
         "/opt/homebrew/include"
         ],
       'libraries': [
-          "/opt/homebrew/Cellar/postgresql@17/17.4/lib/postgresql/libpq.a",
-          "/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.a"
+          #"/opt/homebrew/Cellar/postgresql@17/17.4/lib", "-lpq",
+          "-L/opt/homebrew/opt/libpq/lib", "-lpq",
+          "-L/opt/homebrew/Cellar/libsodium/1.0.20/lib", "-lsodium", "-lc++"
         ],
 
       'dependencies': [
           "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except_all"
-          ]
+        ],
+        'xcode_settings': {
+          "MACOSX_DEPLOYMENT_TARGET": "15.0",
+          "GCC_ENABLE_CPP_EXCEPTIONS": "YES"
+        }
     }
   ]
 }

@@ -490,7 +490,7 @@
     "python": "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3",
     "standalone_static_library": 1,
     "global_prefix": "/Users/yashpatel/.nvm/versions/node/v23.9.0",
-    "local_prefix": "/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys",
+    "local_prefix": "/Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/Frontend",
     "globalconfig": "/Users/yashpatel/.nvm/versions/node/v23.9.0/etc/npmrc",
     "init_module": "/Users/yashpatel/.npm-init.js",
     "userconfig": "/Users/yashpatel/.npmrc",

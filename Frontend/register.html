@@ -1,12 +1,3 @@
-<?php
-session_start();
-
-// Generate CSRF token if it doesn't exist
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,42 +10,18 @@ if (empty($_SESSION['csrf_token'])) {
     <section>
       <div class="register-box">
         <h2>Register for GateKeep</h2>
-        <form action="register_handler.php" method="POST">
-          <!-- CSRF Protection -->
-          <input
-            type="hidden"
-            name="csrf_token"
-            value="<?php echo $_SESSION['csrf_token']; ?>"
-          />
-
+        <form id="register-form">
           <div class="form-group">
             <label for="fullname">Full Name</label>
-            <input
-              type="text"
-              id="fullname"
-              name="fullname"
-              placeholder="Full Name"
-              required
-            />
+            <input type="text" id="fullname" name="fullname" placeholder="Full Name" required/>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Email"
-              required
-            />
+            <input type="email"id="email" name="email" placeholder="Email" required/>
           </div>
           <div class="form-group">
             <label for="password">Master Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Master Password"
-              required
+            <input type="password" id="password" name="password" placeholder="Master Password" required
               oninput="checkStrength()"
               autocomplete="new-password"
             />
@@ -64,12 +31,7 @@ if (empty($_SESSION['csrf_token'])) {
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm Password</label>
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirm-password"
-              placeholder="Confirm Password"
-              required
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required
               oninput="checkMatch()"
             />
             <div id="password-match" class="password-match"></div>
@@ -85,7 +47,6 @@ if (empty($_SESSION['csrf_token'])) {
         </div>
       </div>
     </section>
-
     <script>
       function checkStrength() {
         const password = document.getElementById("password").value;
@@ -125,5 +86,6 @@ if (empty($_SESSION['csrf_token'])) {
         }
       }
     </script>
+    <script src="renderer.js"></script>
   </body>
 </html>

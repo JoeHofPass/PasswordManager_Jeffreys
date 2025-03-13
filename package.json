@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "cd frontend && npm start"
+        "start": "cd frontend && npx electron-rebuild && cd .. node-gyp configure && node-gyp build && cd frontend && npm start"
     },
     "dependencies": {
         "nan": "^2.22.2",

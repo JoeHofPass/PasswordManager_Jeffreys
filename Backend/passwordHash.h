@@ -4,7 +4,7 @@
 #include <libpq-fe.h>
 
 void hashPassword(const char *password, char *hashedPassword);
-void newUser(const char *username, const char *password);
+int newUser(const char *fullname, const char *username, const char *password);
 int verifyUser(const char *username, const char *password);
 
 #endif

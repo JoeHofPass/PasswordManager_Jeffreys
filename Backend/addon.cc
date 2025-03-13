@@ -5,12 +5,16 @@
 
 Napi::String NewUser(const Napi::CallbackInfo& credentials){
     Napi::Env env = credentials.Env();
-    Napi::String username = credentials[0].As<Napi::String>();
-    Napi::String password = credentials[1].As<Napi::String>();
+    Napi::String fullname = credentials[0].As<Napi::String>();
+    Napi::String username = credentials[1].As<Napi::String>();
+    Napi::String password = credentials[2].As<Napi::String>();
 
-    newUser(username.Utf8Value().c_str(), password.Utf8Value().c_str());
-    return Napi::String::New(env, "User created successfully");
 
+    if(newUser(fullname.Utf8Value().c_str(), username.Utf8Value().c_str(), password.Utf8Value().c_str())){
+        return Napi::String::New(env, "1");
+    } else {
+        return Napi::String::New(env, "0");
+    }
 }
 
 Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
@@ -19,9 +23,9 @@ Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
     Napi::String password = credentials[1].As<Napi::String>();
 
     if(verifyUser(username.Utf8Value().c_str(), password.Utf8Value().c_str())){
-        return Napi::String::New(env, "User verified successfully");
+        return Napi::String::New(env, "1");
     } else {
-        return Napi::String::New(env, "invalid email or password");
+        return Napi::String::New(env, "0");
     }
 }
 Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
