@@ -49,29 +49,12 @@ Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
         return Napi::String::New(env, "0");
     }
 }
-// struct Passwords{
-//     std::string service_name;
-//     std::string service_username;
-//     std::string service_password;
-// };
-//std::vector<Passwords> getPasswords(const char *username);
+
 Napi::String GetPasswords(const Napi::CallbackInfo& credentials){
     Napi::Env env = credentials.Env();
     std::string username = credentials[0].As<Napi::String>().Utf8Value();
 
     std::string JSON = getPasswords(username.c_str());
-    //std::vector<Passwords> passwords = getPasswords(username.c_str());
-    // std::ostringstream JSON;
-    // JSON << "[";
-    // for (size_t i = 0; i < passwords.size(); i++){
-    //     JSON << "{"
-    //     << "\"service\": \"" << passwords[i].service_name << "\","
-    //     << "\"username\": \"" << passwords[i].service_username << "\","
-    //     << "\"password\": \"" << passwords[i].service_password << "\""
-    //     << "}";
-    //     if(i < passwords.size() - 1) JSON << ",";
-    // }
-    // JSON << "]";
     return Napi::String::New(env, JSON);
 }
 
