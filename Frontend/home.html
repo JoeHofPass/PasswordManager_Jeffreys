@@ -30,7 +30,7 @@
             <a href="account.html"><i class="fas fa-user"></i> Account</a>
           </li>
           <li>
-            <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="login.html" onclick="logout()"> <i class="fas fa-sign-out-alt"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -118,12 +118,14 @@
         <button class="btn-generate" onclick="generatePassword()">
           Generate Password
         </button>
-        <button class="btn-save" onclick="saveNewPassword()">
+        <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
           Save New Password
         </button>
       </div>
     </div>
 
     <script src="dashboard.js"></script>
+    <script src="renderer.js"></script>
+
   </body>
 </html>

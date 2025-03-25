@@ -6,6 +6,10 @@ function closePasswordPopup() {
   document.getElementById("passwordPopup").style.display = "none";
 }
 
+function logout() {
+  localStorage.removeItem("currentUserEmail");
+}
+
 function generatePassword() {
   const length = 16;
   const chars =
@@ -15,7 +19,7 @@ function generatePassword() {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   document.getElementById("generatedPassword").value = password;
-  checkPasswordStrength(password);
+  //checkPasswordStrength(password);
 }
 
 function checkPasswordStrength(password) {
@@ -81,11 +85,19 @@ function saveNewPassword() {
 }
 
 function clearInputFields() {
+  if (
+  document.getElementById("siteName")&&
+  document.getElementById("userEmail")&&
+  document.getElementById("generatedPassword")&&
+  document.getElementById("strengthBar")&&
+  document.getElementById("strengthText")
+  ) {
   document.getElementById("siteName").value = "";
   document.getElementById("userEmail").value = "";
   document.getElementById("generatedPassword").value = "";
   document.getElementById("strengthBar").value = 0;
   document.getElementById("strengthText").innerText = "";
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -107,17 +119,16 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+  if (
+    document.getElementById("generatePasswordBtn")&&
+    document.getElementById("savePasswordBtn")&&
+    document.getElementById("openPopupBtn")&&
+    document.getElementById("closePopupBtn")
+    ) {
+      document.getElementById("generatePasswordBtn").addEventListener("click", generatePassword);
+      document.getElementById("savePasswordBtn").addEventListener("click", savePassword);
+      document.getElementById("openPopupBtn").addEventListener("click", openPasswordPopup);
+      document.getElementById("closePopupBtn").addEventListener("click", closePasswordPopup);
 
-  document
-    .getElementById("generatePasswordBtn")
-    .addEventListener("click", generatePassword);
-  document
-    .getElementById("savePasswordBtn")
-    .addEventListener("click", saveNewPassword);
-  document
-    .getElementById("openPopupBtn")
-    .addEventListener("click", openPasswordPopup);
-  document
-    .getElementById("closePopupBtn")
-    .addEventListener("click", closePasswordPopup);
+    }
 });
