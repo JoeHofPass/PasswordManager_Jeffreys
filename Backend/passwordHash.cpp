@@ -157,15 +157,8 @@ int verifyUser(const char *username, const char *password){
     return 1;
 }
 
-// struct Passwords{
-//     std::string service_name;
-//     std::string service_username;
-//     std::string service_password;
-// };
-
 std::string getPasswords(const char *username){
     PGconn *conn = connPGDB(DB_CONN);
-    //std::vector<Passwords> passwords;
 
     const char *getUserID = "SELECT id FROM users WHERE username = $1";
     const char *paramValues[] = {username};
