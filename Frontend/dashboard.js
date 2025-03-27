@@ -63,12 +63,18 @@ function saveNewPassword() {
     alert("All fields are required!");
     return;
   }
+  let domain = siteName.toLowerCase().replace(/\s+/g, "");
+  if (!domain.includes(".")) {
+    domain += ".com";
+  }
+  const logoURL = `https://logo.clearbit.com/${domain}`;
+
 
   const accountList = document.getElementById("accountList");
   const newAccount = document.createElement("div");
   newAccount.classList.add("account-card");
   newAccount.innerHTML = `
-        <img src="default_logo.png" alt="logo" class="site-logo" />
+        <img src="${logoURL}" onerror="this.onerror=null;this.src='default_logo.png';" alt="${siteName}" class="site-logo" />
         <div class="account-info">
             <strong>${siteName}</strong>
             <p>${userEmail}</p>
@@ -86,7 +92,7 @@ function saveNewPassword() {
 
 function clearInputFields() {
   if (
-  document.getElementById("siteName")&&
+  document.getElementById("siteName")&& 
   document.getElementById("userEmail")&&
   document.getElementById("generatedPassword")&&
   document.getElementById("strengthBar")&&
@@ -119,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
   if (
     document.getElementById("generatePasswordBtn")&&
     document.getElementById("savePasswordBtn")&&
@@ -126,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("closePopupBtn")
     ) {
       document.getElementById("generatePasswordBtn").addEventListener("click", generatePassword);
-      document.getElementById("savePasswordBtn").addEventListener("click", savePassword);
+      document.getElementById("savePasswordBtn").addEventListener("click", saveNewPassword);
       document.getElementById("openPopupBtn").addEventListener("click", openPasswordPopup);
       document.getElementById("closePopupBtn").addEventListener("click", closePasswordPopup);
 

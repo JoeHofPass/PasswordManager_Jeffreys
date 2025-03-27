@@ -3,6 +3,7 @@
 #include <sstream>
 #include "DBconnection.h"
 #include "passwordHash.h"
+#include <sodium.h>
 
 Napi::String StorePassword(const Napi::CallbackInfo& credentials){
     Napi::Env env = credentials.Env();
@@ -58,12 +59,22 @@ Napi::String GetPasswords(const Napi::CallbackInfo& credentials){
     return Napi::String::New(env, JSON);
 }
 
+Napi::String Main(const Napi::CallbackInfo& credentials) {
+    Napi::Env env = credentials.Env();
+    if (sodium_init() < 0) {
+        Napi::TypeError::New(env, "Failed to initialize libsodium").ThrowAsJavaScriptException();
+        return Napi::String::New(env, "1");
+    }
+    return Napi::String::New(env, "Libsodium initialized successfully");
+}
+
 Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
     exports.Set("storePassword", Napi::Function::New(credentials, StorePassword));
     exports.Set("newUser", Napi::Function::New(credentials, NewUser));
     exports.Set("getFullname", Napi::Function::New(credentials, GetFullname));
     exports.Set("verifyUser", Napi::Function::New(credentials, VerifyUser));
     exports.Set("getPasswords", Napi::Function::New(credentials, GetPasswords));
+    exports.Set(Napi::String::New(credentials, "Main"), Napi::Function::New(credentials, Main));
 
     return exports;
 }

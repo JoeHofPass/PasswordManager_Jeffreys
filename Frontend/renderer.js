@@ -5,17 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const accounts = document.getElementById("accountList");
 
     const current = localStorage.getItem("currentUserEmail");
-    if(current && accounts){
+    if (current && accounts) {
         window.electron.send("get-passwords", { email: current });
     }
-    
-    if(loginForm) {
+
+    if (loginForm) {
         document.getElementById("login-form").addEventListener("submit", (event) => {
             event.preventDefault();
-        
+
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-        
+
             if (!window.electron) {
                 console.error("Electron API not found!");
                 return;
@@ -30,23 +30,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("currentUserEmail", email);
                 localStorage.setItem("currentUsername", response.fullname);
                 window.location.href = "home.html";
-               // window.electron.send("get-passwords", { email });
+                // window.electron.send("get-passwords", { email });
 
             } else {
                 console.log("Login failed!");
             }
         });
     }
-    
-    if (registerForm){
+
+    if (registerForm) {
         document.getElementById("register-form").addEventListener("submit", (event) => {
             event.preventDefault();
-        
+
             const fullname = document.getElementById("fullname").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
-        
+
             if (password !== confirmPassword) {
                 console.error("Passwords do not match! Please try again.");
                 return;
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             window.electron.send("register", { fullname, email, password });
         });
-        
+
         window.electron.on("register-response", (response) => {
             if (response === "success") {
                 console.log("Registration successful!");
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if(passwordPopup){
+    if (passwordPopup) {
         document.getElementById("savepassbtn").addEventListener("click", (event) => {
             event.preventDefault();
             const email = localStorage.getItem("currentUserEmail");
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Electron API not found!");
                 return;
             }
-            window.electron.send("store-password", { email, serviceName, serviceUsername, servicePassword });  
+            window.electron.send("store-password", { email, serviceName, serviceUsername, servicePassword });
         });
         window.electron.on("storePassword-response", (response) => {
             if (response === "success") {
@@ -92,18 +92,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if(accounts){
+    if (accounts) {
         window.electron.on("get-passwords-response", (passwords) => {
             console.log("Listening for get-password-response");
             const accountList = document.getElementById("accountList");
             console.log("recieved passwords:", passwords);
             accountList.innerHTML = "";
             passwords.forEach(password => {
+                let domain = password.service.toLowerCase().replace(/\s+/g, "");
+                if (!domain.includes(".")) {
+                    domain += ".com";
+                }
+
+                const logoURL = `https://logo.clearbit.com/${domain}`;
                 const accountCard = document.createElement("div");
                 accountCard.classList.add("account-card");
-                
+
                 accountCard.innerHTML = `
-            <img src="default_logo.png" alt="logo" class="site-logo" />
+            <img src="${logoURL}" onerror="this.onerror=null;this.src='default_logo.png';" alt="${password.service}" class="site-logo" />
             <div class="account-info">
                 <strong>${password.service}</strong>
                 <p>${password.username}</p>
@@ -113,9 +119,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
         `;
-        accountList.appendChild(accountCard);
-          });
-       });
+                accountList.appendChild(accountCard);
+            });
+        });
     } else {
         console.log("No passwords to display.");
     }

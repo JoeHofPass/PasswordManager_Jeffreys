@@ -62,7 +62,73 @@ Release/obj.target/addon/backend/addon.o: ../backend/addon.cc \
   /Users/yashpatel/Documents/GitHub/PasswordManager_Jeffreys/node_modules/node-addon-api/napi-inl.deprecated.h \
   ../backend/DBconnection.h /opt/homebrew/include/libpq-fe.h \
   /opt/homebrew/include/postgres_ext.h \
-  /opt/homebrew/include/pg_config_ext.h ../backend/passwordHash.h
+  /opt/homebrew/include/pg_config_ext.h ../backend/passwordHash.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/version.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/export.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/core.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aegis128l.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aegis256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aes256gcm.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_chacha20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_xchacha20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha512256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha512.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash_sha512.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash_sha256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box_curve25519xsalsa20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_xsalsa20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_hchacha20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_hsalsa20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa2012.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa208.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_generichash.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_generichash_blake2b.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_blake2b.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_hkdf_sha256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_hkdf_sha512.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kx.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_onetimeauth.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_onetimeauth_poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_argon2i.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_argon2id.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_curve25519.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox_xsalsa20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretstream_xchacha20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_chacha20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_shorthash.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_shorthash_siphash24.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_sign.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_sign_ed25519.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_16.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_32.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_64.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes_internal_random.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes_sysrandom.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/runtime.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/utils.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box_curve25519xchacha20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_xchacha20.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_ed25519.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_ristretto255.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_scryptsalsa208sha256.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_ed25519.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_ristretto255.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox_xchacha20poly1305.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa2012.h \
+  /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa208.h
 ../backend/addon.cc:
 /Users/yashpatel/Library/Caches/node-gyp/23.9.0/include/node/node.h:
 /Users/yashpatel/Library/Caches/node-gyp/23.9.0/include/node/v8.h:
@@ -129,3 +195,69 @@ Release/obj.target/addon/backend/addon.o: ../backend/addon.cc \
 /opt/homebrew/include/postgres_ext.h:
 /opt/homebrew/include/pg_config_ext.h:
 ../backend/passwordHash.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/version.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/export.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/core.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aegis128l.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aegis256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_aes256gcm.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_chacha20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_aead_xchacha20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha512256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha512.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash_sha512.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_auth_hmacsha256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash_sha256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box_curve25519xsalsa20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_xsalsa20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_hchacha20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_hsalsa20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa2012.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_salsa208.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_generichash.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_generichash_blake2b.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_hash.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_blake2b.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_hkdf_sha256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kdf_hkdf_sha512.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_kx.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_onetimeauth.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_onetimeauth_poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_argon2i.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_argon2id.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_curve25519.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox_xsalsa20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretstream_xchacha20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_chacha20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_shorthash.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_shorthash_siphash24.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_sign.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_sign_ed25519.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_16.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_32.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_verify_64.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes_internal_random.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/randombytes_sysrandom.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/runtime.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/utils.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_box_curve25519xchacha20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_xchacha20.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_ed25519.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_core_ristretto255.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_pwhash_scryptsalsa208sha256.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_ed25519.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_scalarmult_ristretto255.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox_xchacha20poly1305.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa2012.h:
+/opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa208.h:

@@ -121,8 +121,7 @@ INCS_Release := \
 OBJS := \
 	$(obj).target/$(TARGET)/backend/addon.o \
 	$(obj).target/$(TARGET)/backend/DBconnection.o \
-	$(obj).target/$(TARGET)/backend/passwordHash.o \
-	$(obj).target/$(TARGET)/backend/main.o
+	$(obj).target/$(TARGET)/backend/passwordHash.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)

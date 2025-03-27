@@ -9,5 +9,4 @@ std::string getFullname(const char *username);
 int verifyUser(const char *username, const char *password);
 std::string getPasswords(const char *username);
 
-
 #endif

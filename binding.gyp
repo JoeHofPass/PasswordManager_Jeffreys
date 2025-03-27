@@ -3,7 +3,7 @@
     {
       'target_name': "addon",
       "sources": [
-        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp", "backend/main.cpp"
+        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp" #"backend/main.cpp"
       ],
       "cflags": ["-std=c++17"],
       "ldflags": ["-stdlib=libc++"],
@@ -29,11 +29,22 @@
                 }
           }
         ],
-        
         ["OS == 'win'", {
-            "include_dirs": [],
-            "libraries": [],
-              "dependencies": []
+            "include_dirs": [
+                "<!(node -e \"require('node-addon-api').include\")",
+                "C:/Program Files/PostgreSQL/17/include",
+                "C:/Program Files/libsodium/include"
+            ],
+            "libraries": [
+                "C:/Program Files/PostgreSQL/17/lib/libpq.lib",
+                "C:/Program Files/libsodium/lib/libsodium.lib"
+            ],
+            "cflags!": [ "-fno-exceptions" ],
+            "cflags_cc!": [ "-fno-exceptions" ],
+            "defines": [ "NAPI_DISABLE_CPP_EXCEPTIONS" ],
+            "dependencies": [
+                "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except_all"
+            ]
         }
       ]
     ]

@@ -29,7 +29,6 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         return 0;
     }
 
-    //int userID = atoi(PQgetvalue(IDres,0,0));
     std::string userID = PQgetvalue(IDres, 0,0);
     PQclear(IDres);
     const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password) VALUES ($1,$2,$3,$4)";
