@@ -1,0 +1,475 @@
+/* ---- GLOBAL STYLES ---- */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  background: #16222a;
+  color: #e6f0f8;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ---- DASHBOARD CONTAINER ---- */
+.dashboard-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #16222a;
+  color: inherit;
+}
+
+/* ---- SIDEBAR ---- */
+.sidebar {
+  width: 250px;
+  background: #1b2f40;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 15px;
+}
+
+.logo-img {
+  width: 140px;
+  border-radius: 50%;
+  border: 2px solid #bbe1fa;
+  box-shadow: 0 0 10px rgba(187, 225, 250, 0.3);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.sidebar ul li {
+  padding: 14px 24px;
+  text-align: left;
+  transition: background 0.3s ease;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #e6f0f8;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: #71c9ce;
+  color: #0b192c;
+  border-radius: 6px;
+}
+
+/* ---- MAIN CONTENT ---- */
+.main-content {
+  flex: 1;
+  background: #0e1624;
+  padding: 35px;
+  overflow-y: auto;
+}
+
+/* ---- HEADER ---- */
+/* ---- HEADER ---- */
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.header-title {
+  font-size: 2.4em;
+  color: #bbe1fa;
+  margin-bottom: 25px;
+}
+
+.header-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* ---- SEARCH BAR ---- */
+#searchBar {
+  padding: 12px 20px;
+  width: 300px;
+  max-width: 90%;
+  border-radius: 8px;
+  border: 1px solid #71c9ce;
+  background: #0f1b2c;
+  color: #e6f0f8;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#searchBar:focus {
+  outline: none;
+  border-color: #bbe1fa;
+}
+
+/* ---- TOGGLE ---- */
+.theme-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: #1b2f40;
+  box-shadow: 0 0 8px rgba(113, 201, 206, 0.2);
+}
+
+.theme-toggle-icon {
+  font-size: 1.2em;
+  user-select: none;
+  color: #bbe1fa;
+}
+
+/* Switch */
+.toggle-switch {
+  position: relative;
+  width: 55px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #aaa;
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+input:checked + .slider {
+  background-color: #71c9ce;
+}
+
+input:checked + .slider:before {
+  transform: translateX(27px);
+}
+
+/* ---- ADD NEW PASSWORD BUTTON ---- */
+.btn-add {
+  padding: 12px 20px;
+  background: #71c9ce;
+  color: #0e1624;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.btn-add:hover {
+  background: #48b7c6;
+  transform: scale(1.05);
+}
+
+/* ---- PASSWORD LIST ---- */
+.password-list {
+  background: #1e3e62;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.accounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.account-card {
+  background: #1c2c40;
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #71c9ce;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: border 0.3s ease;
+}
+
+.account-card:hover {
+  border-color: #bbe1fa;
+}
+
+.site-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.password-field {
+  background: none;
+  border: none;
+  color: #bbe1fa;
+  font-size: 1em;
+  text-align: center;
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: #bbe1fa;
+}
+
+/* ---- POPUP ---- */
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #16222a;
+  padding: 30px;
+  border-radius: 12px;
+  width: 420px;
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.35);
+  z-index: 999;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 15px;
+}
+
+.popup-content h2 {
+  color: #bbe1fa;
+  font-size: 1.5em;
+}
+
+.popup-content input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #71c9ce;
+  background: #0e1624;
+  color: white;
+}
+
+.popup-content button {
+  padding: 12px;
+  background: #71c9ce;
+  border: none;
+  color: #0e1624;
+  font-size: 1.1em;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.popup-content button:hover {
+  background: #48b7c6;
+  transform: scale(1.05);
+}
+
+.close-btn {
+  font-size: 1.8em;
+  color: white;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+/* ---- THEME TOGGLE SWITCH ---- */
+.theme-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle-icon {
+  font-size: 1.2em;
+  user-select: none;
+  color: #bbe1fa;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 55px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #aaa;
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #71c9ce;
+}
+
+input:checked + .slider:before {
+  transform: translateX(27px);
+}
+
+/* ---- LIGHT MODE STYLES ---- */
+body.light {
+  background: #f4f9fb;
+  color: #222;
+}
+
+body.light .dashboard-container {
+  background: #ffffff;
+}
+
+body.light .sidebar {
+  background: #eef2f6;
+}
+
+body.light .sidebar ul li a {
+  color: #222;
+}
+
+body.light .sidebar ul li a:hover,
+body.light .sidebar ul li a.active {
+  background: #d7f5f6;
+  color: #000;
+}
+
+body.light .main-content {
+  background: #ffffff;
+  color: #000;
+}
+
+body.light #searchBar {
+  background: #ffffff;
+  color: #111;
+  border: 1px solid #ccc;
+}
+
+body.light .btn-add {
+  background: #78d6c6;
+  color: #000;
+}
+
+body.light .btn-add:hover {
+  background: #60c4b4;
+}
+
+body.light .password-list,
+body.light .alerts-section,
+body.light .deleted-passwords,
+body.light .account-section,
+body.light .terms-section {
+  background: #f7fafd;
+  color: #000;
+}
+
+body.light .account-card {
+  background: #ffffff;
+  border-color: #78d6c6;
+}
+
+body.light .popup {
+  background: #ffffff;
+  color: #000;
+}
+
+body.light .popup-content input {
+  background: #ffffff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+body.light .popup-content button {
+  background: #78d6c6;
+  color: #000;
+}
+
+body.light .toggle-password {
+  color: #111;
+}
+
+.slider:before {
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
