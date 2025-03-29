@@ -107,7 +107,7 @@ std::string getFullname(const char *username){
         fprintf(stderr, "failed to execute query %s\n", PQerrorMessage(conn));
         PQclear(res);
         PQfinish(conn);
-        return "0";
+        return 0;
     }
     if(PQntuples(res) == 0){
         printf("Name not found\n");
