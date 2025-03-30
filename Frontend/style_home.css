@@ -293,8 +293,9 @@ input:checked + .slider:before {
 }
 
 /* ===== POPUP ===== */
+/* ===== POPUP ===== */
 .popup {
-  background: rgba(0, 255, 195, 0.08);
+  background: #0b0f12; /* Fully opaque dark background */
   border: 1px solid #00ffe1;
   border-radius: 10px;
   padding: 25px;
@@ -303,7 +304,7 @@ input:checked + .slider:before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 99;
+  z-index: 999;
   box-shadow: 0 0 20px #00ffe1;
   display: none;
 }
