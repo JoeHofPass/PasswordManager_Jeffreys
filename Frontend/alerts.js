@@ -19,7 +19,6 @@ function checkSecurityIssues() {
   let hasWeakPassword = false;
   let hasDuplicatePasswords = false;
 
-  // Check for weak passwords
   const weakPasswords = [
     "123456",
     "password",
@@ -44,7 +43,6 @@ function checkSecurityIssues() {
     passwordCounts[password].push(site);
   });
 
-  // Check for duplicate passwords
   Object.entries(passwordCounts).forEach(([password, sites]) => {
     if (sites.length > 1) {
       hasDuplicatePasswords = true;
@@ -70,12 +68,13 @@ function createAlertMessage(message, type) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("alert-message");
 
+  // Add appropriate class for alert type
   if (type === "critical") {
-    alertDiv.style.background = "#ee2e31"; // Red for critical alerts
+    alertDiv.classList.add("critical-alert");
   } else if (type === "warning") {
-    alertDiv.style.background = "#ffcc00"; // Yellow for warnings
+    alertDiv.classList.add("warning-alert");
   } else {
-    alertDiv.style.background = "#28a745"; // Green for safe status
+    alertDiv.classList.add("safe-alert");
   }
 
   alertDiv.innerHTML = message;
