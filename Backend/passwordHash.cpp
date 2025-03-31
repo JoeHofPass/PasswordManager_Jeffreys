@@ -6,6 +6,7 @@
 #include <sodium.h>
 #include "DBconnection.h"
 #include "passwordHash.h"
+using namespace std;
 
 #define DB_CONN "dbname=GateKeep user=postgres password=IntersteLL@r_@5201 host=localhost port=5433"
 
@@ -29,7 +30,7 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         return 0;
     }
 
-    std::string userID = PQgetvalue(IDres, 0,0);
+    string userID = PQgetvalue(IDres, 0,0);
     PQclear(IDres);
     const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password) VALUES ($1,$2,$3,$4)";
     const char *creds[] = {userID.c_str(), serviceName, serviceUsername, servicePassword};
@@ -97,7 +98,7 @@ int newUser(const char *fullname, const char *username, const char *password){
     return 1;
 }
 
-std::string getFullname(const char *username){
+string getFullname(const char *username){
     PGconn *conn = connPGDB(DB_CONN);
 
     const char *getName = "SELECT fullname FROM users WHERE username = $1";
@@ -115,7 +116,7 @@ std::string getFullname(const char *username){
         PQfinish(conn);
         return 0;
     }
-    std::string fullname = PQgetvalue(res, 0, 0);
+    string fullname = PQgetvalue(res, 0, 0);
 
     PQclear(res);
     PQfinish(conn);
@@ -156,7 +157,7 @@ int verifyUser(const char *username, const char *password){
     return 1;
 }
 
-std::string getPasswords(const char *username){
+string getPasswords(const char *username){
     PGconn *conn = connPGDB(DB_CONN);
 
     const char *getUserID = "SELECT id FROM users WHERE username = $1";
@@ -196,7 +197,7 @@ std::string getPasswords(const char *username){
         PQfinish(conn);
         return "[]";
     }
-    std::ostringstream JSON;
+    ostringstream JSON;
     JSON << "[";
     for (int i = 0; i < PQntuples(res); i++){
         JSON << "{"
