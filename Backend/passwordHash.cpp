@@ -59,7 +59,7 @@ void hashPassword(const char *password, char *hashedPassword){
 }
 
 //create new user and add credentials to database
-int newUser(const char *fullname, const char *username, const char *password){
+int newUser(const char *fullname, const char *username, const char *password, const char *pin){
     PGconn *conn = connPGDB(DB_CONN);
 
     const char *existingUser = "SELECT 1 FROM users WHERE username = $1 LIMIT 1";
@@ -81,9 +81,9 @@ int newUser(const char *fullname, const char *username, const char *password){
 
     char hashed_password[crypto_pwhash_STRBYTES];
     hashPassword(password, hashed_password);
-    const char *credentials[] = {fullname, username, hashed_password};
+    const char *credentials[] = {fullname, username, hashed_password, pin};
 
-    PGresult *res = PQexecParams(conn, " INSERT INTO users (fullname, username, password) VALUES ($1, $2, $3)", 3, NULL, credentials, NULL, NULL, 0);    
+    PGresult *res = PQexecParams(conn, " INSERT INTO users (fullname, username, password, pin) VALUES ($1, $2, $3, $4)", 4, NULL, credentials, NULL, NULL, 0);    
     if(PQresultStatus(res) != PGRES_COMMAND_OK){
         fprintf(stderr, "failed to insert %s\n", PQerrorMessage(conn));
         PQclear(res);
@@ -157,6 +157,98 @@ int verifyUser(const char *username, const char *password){
     return 1;
 }
 
+//pin auth
+int verifyPin(const char *username, const char *pin){
+    PGconn *conn = connPGDB(DB_CONN);
+
+    const char *getPin = "SELECT pin FROM users WHERE username = $1";
+    PGresult *res = PQexecParams(conn, getPin, 1, NULL, &username, NULL, NULL, 0);
+
+    if(PQresultStatus(res) != PGRES_TUPLES_OK){
+        fprintf(stderr, "failed to execute query %s\n", PQerrorMessage(conn));
+        PQclear(res);
+        PQfinish(conn);
+        return 0;
+    }
+    if(PQntuples(res) == 0){
+        printf("pin not found\n");
+        PQclear(res);
+        PQfinish(conn);
+        return 0;
+    }
+
+    const char *storedPin = PQgetvalue(res, 0, 0);
+    if (strcmp(storedPin, pin) != 0) {
+        printf("Incorrect pin\n");
+        PQclear(res);
+        PQfinish(conn);
+        return 0;
+    }
+
+    printf("pin verfied!\n");
+    PQclear(res);
+    PQfinish(conn);
+    return 1;
+}
+
+//get all deleted passwords from last 30 days
+string getDeletedPasswords(const char *username){
+    PGconn *conn = connPGDB(DB_CONN);
+
+    const char *getUserID = "SELECT id FROM users WHERE username = $1";
+    const char *paramValues[] = {username};
+    PGresult *IDres = PQexecParams(conn, getUserID, 1, NULL, paramValues, NULL, NULL, 0);
+
+    if(PQresultStatus(IDres) != PGRES_TUPLES_OK){
+        fprintf(stderr, "failed to execute get user ID query %s\n", PQerrorMessage(conn));
+        PQclear(IDres);
+        PQfinish(conn);
+        return "[]";
+    }
+    if(PQntuples(IDres) == 0){
+        printf("No ID found\n");
+        PQclear(IDres);
+        PQfinish(conn);
+        return "[]";
+    }
+
+    const char *userID = PQgetvalue(IDres, 0, 0);
+    PQclear(IDres);
+    const char *paramValues2[] = {userID};
+
+    const char *callPasswords = "SELECT service_name, service_username, service_password , deleted_at FROM credentials WHERE user_id = $1 and is_deleted = true and deleted_at >= NOW() - INTERVAL '30 days'";
+    PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
+
+    if(PQresultStatus(res) != PGRES_TUPLES_OK){
+        fprintf(stderr, "failed to execute call passwords query %s\n", PQerrorMessage(conn));
+        PQclear(res);
+        PQfinish(conn);
+        return "[]";
+    }
+    if(PQntuples(res) == 0){
+        printf("No passwords found\n");
+        PQclear(res);
+        PQfinish(conn);
+        return "[]";
+    }
+    ostringstream JSON;
+    JSON << "[";
+    for (int i = 0; i < PQntuples(res); i++){
+        JSON << "{"
+        << "\"service\": \"" << PQgetvalue(res, i, 0) << "\","
+        << "\"username\": \"" << PQgetvalue(res, i, 1) << "\","
+        << "\"password\": \"" << PQgetvalue(res, i, 2) << "\""
+        << "}";
+        if(i < PQntuples(res) - 1) JSON << ",";
+    }
+    JSON << "]";
+
+    PQclear(res);
+    PQfinish(conn);
+    return JSON.str();
+}
+
+//get all passwords still in use
 string getPasswords(const char *username){
     PGconn *conn = connPGDB(DB_CONN);
 
@@ -181,8 +273,7 @@ string getPasswords(const char *username){
     PQclear(IDres);
     const char *paramValues2[] = {userID};
 
-
-    const char *callPasswords = "SELECT service_name, service_username, service_password FROM credentials WHERE user_id = $1";
+    const char *callPasswords = "SELECT service_name, service_username, service_password FROM credentials WHERE user_id = $1 and is_deleted = false";
     PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
 
     if(PQresultStatus(res) != PGRES_TUPLES_OK){

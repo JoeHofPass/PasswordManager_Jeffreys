@@ -36,9 +36,9 @@ ipcMain.on("login", (event, { email, password }) => {
   }
 });
 
-ipcMain.on("register", (event, { fullname, email, password }) => {
+ipcMain.on("register", (event, { fullname, email, password, pin }) => {
   try {
-    const NEWUSER = addon.newUser(fullname, email, password);
+    const NEWUSER = addon.newUser(fullname, email, password, pin);
     event.reply("register-response", NEWUSER === "1" ? "success" : "fail");
   } catch (error) {
     console.error("native module crashed:", error);
@@ -78,6 +78,20 @@ ipcMain.on("get-passwords", (event, { email }) => {
   } catch (error) {
     console.error("native module crashed:", error);
     event.reply("get-passwords-response", "error");
+  }
+});
+
+ipcMain.on("get-deletedpasswords", (event, { email }) => {
+  try {
+    //console.log("Recieved email:" ,email);
+    const deletedPasswordsJSON = addon.getDeletedPasswords(email);
+    //console.log(deletedPasswordsJSON);
+    const deletedPasswords = JSON.parse(deletedPasswordsJSON);
+    //console.log(deletedPasswords);
+    event.reply("get-deletedpasswords-response", deletedPasswords);
+  } catch (error) {
+    console.error("native module crashed:", error);
+    event.reply("get-deletedpasswords-response", "error");
   }
 });
 

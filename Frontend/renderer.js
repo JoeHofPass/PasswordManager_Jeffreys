@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
+            const pin = document.getElementById("pin").value;
 
             if (password !== confirmPassword) {
                 console.error("Passwords do not match! Please try again.");
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Electron API not found!");
                 return;
             }
-            window.electron.send("register", { fullname, email, password });
+            window.electron.send("register", { fullname, email, password, pin });
         });
 
         window.electron.on("register-response", (response) => {

@@ -24,8 +24,10 @@ Napi::String NewUser(const Napi::CallbackInfo& credentials){
     Napi::String fullname = credentials[0].As<Napi::String>();
     Napi::String username = credentials[1].As<Napi::String>();
     Napi::String password = credentials[2].As<Napi::String>();
+    Napi::String pin = credentials[3].As<Napi::String>();
 
-    if(newUser(fullname.Utf8Value().c_str(), username.Utf8Value().c_str(), password.Utf8Value().c_str())){
+
+    if(newUser(fullname.Utf8Value().c_str(), username.Utf8Value().c_str(), password.Utf8Value().c_str(), pin.Utf8Value().c_str())){
         return Napi::String::New(env, "1");
     } else {
         return Napi::String::New(env, "0");
@@ -51,11 +53,31 @@ Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
     }
 }
 
+Napi::String VerifyPin(const Napi::CallbackInfo& credentials){
+    Napi::Env env = credentials.Env();
+    Napi::String username = credentials[0].As<Napi::String>();
+    Napi::String pin = credentials[1].As<Napi::String>();
+
+    if(verifyPin(username.Utf8Value().c_str(), pin.Utf8Value().c_str())){
+        return Napi::String::New(env, "1");
+    } else {
+        return Napi::String::New(env, "0");
+    }
+}
+
 Napi::String GetPasswords(const Napi::CallbackInfo& credentials){
     Napi::Env env = credentials.Env();
     std::string username = credentials[0].As<Napi::String>().Utf8Value();
 
     std::string JSON = getPasswords(username.c_str());
+    return Napi::String::New(env, JSON);
+}
+
+Napi::String GetDeletedPasswords(const Napi::CallbackInfo& credentials){
+    Napi::Env env = credentials.Env();
+    std::string username = credentials[0].As<Napi::String>().Utf8Value();
+
+    std::string JSON = getDeletedPasswords(username.c_str());
     return Napi::String::New(env, JSON);
 }
 
@@ -73,7 +95,9 @@ Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
     exports.Set("newUser", Napi::Function::New(credentials, NewUser));
     exports.Set("getFullname", Napi::Function::New(credentials, GetFullname));
     exports.Set("verifyUser", Napi::Function::New(credentials, VerifyUser));
+    exports.Set("verifyPin", Napi::Function::New(credentials, VerifyPin));
     exports.Set("getPasswords", Napi::Function::New(credentials, GetPasswords));
+    exports.Set("getDeletedPasswords", Napi::Function::New(credentials, GetDeletedPasswords));
     exports.Set(Napi::String::New(credentials, "Main"), Napi::Function::New(credentials, Main));
 
     return exports;
