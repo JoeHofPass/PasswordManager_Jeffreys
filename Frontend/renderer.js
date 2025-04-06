@@ -94,9 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (accounts) {
         window.electron.on("get-passwords-response", (passwords) => {
-            console.log("Listening for get-password-response");
+            //console.log("Listening for get-password-response");
             const accountList = document.getElementById("accountList");
-            console.log("recieved passwords:", passwords);
+            //console.log("recieved passwords:", passwords);
             accountList.innerHTML = "";
             passwords.forEach(password => {
                 let domain = password.service.toLowerCase().replace(/\s+/g, "");

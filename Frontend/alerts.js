@@ -1,38 +1,40 @@
-document.addEventListener("DOMContentLoaded", checkSecurityIssues);
+document.addEventListener("DOMContentLoaded", () => {
+  // Trigger password security check when the page is loaded
+  //localStorage.setItem("currentUserEmail", email);
+  const curr = localStorage.getItem("currentUserEmail");
+  loadWeakPasswordsFromFile('https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Passwords/Common-Credentials/10-million-password-list-top-100000.txt', curr);
 
-function checkSecurityIssues() {
+
+
+function loadWeakPasswordsFromFile(url, email) {
+  fetch(url)
+    .then(response => response.text())
+    .then(data => {
+      const weakPasswords = data.split("\n").map(p => p.trim());
+      window.electron.send("get-passwords", {email: curr});
+
+      window.electron.on("get-passwords-response", (passwords) => {
+        checkSecurityIssues(weakPasswords, passwords);
+      });
+    })
+    .catch(error => {
+      console.error("Error loading weak password file:", error);
+    });
+}
+
+function checkSecurityIssues(weakPasswords, passwords) {
   const alertMessages = document.getElementById("alertMessages");
   alertMessages.innerHTML = ""; // Clear previous alerts
-
-  const storedPasswords = [
-    { site: "Amazon", email: "user@example.com", password: "123password" },
-    { site: "Google", email: "john.doe@gmail.com", password: "SecurePass123!" },
-    {
-      site: "Facebook",
-      email: "jane.doe@facebook.com",
-      password: "123password",
-    },
-    { site: "Twitter", email: "user@twitter.com", password: "SecurePass123!" },
-  ]; // Simulated password data, replace with actual stored passwords
 
   const passwordCounts = {};
   let hasWeakPassword = false;
   let hasDuplicatePasswords = false;
 
-  const weakPasswords = [
-    "123456",
-    "password",
-    "123password",
-    "qwerty",
-    "admin",
-    "letmein",
-  ];
-
-  storedPasswords.forEach(({ site, password }) => {
+  passwords.forEach(({ service, password }) => {
     if (weakPasswords.includes(password)) {
       hasWeakPassword = true;
       createAlertMessage(
-        `🚨 Weak password detected for <strong>${site}</strong>. Please update your password immediately.`,
+        `🚨 Weak password detected for ${service}. Please update your password immediately.`,
         "critical"
       );
     }
@@ -40,21 +42,21 @@ function checkSecurityIssues() {
     if (!passwordCounts[password]) {
       passwordCounts[password] = [];
     }
-    passwordCounts[password].push(site);
+    passwordCounts[password].push(service);
   });
 
-  Object.entries(passwordCounts).forEach(([password, sites]) => {
-    if (sites.length > 1) {
+  // Check for duplicate passwords
+  Object.entries(passwordCounts).forEach(([password, service]) => {
+    if (service.length > 1) {
       hasDuplicatePasswords = true;
       createAlertMessage(
-        `⚠️ The password used for <strong>${sites.join(
-          ", "
-        )}</strong> is reused across multiple accounts. This is a major security risk!`,
+        `⚠️ The password used for ${service.join(", ")} is reused across these accounts. This is a major security risk!`,
         "warning"
       );
     }
   });
 
+  // If no issues, display a safe message
   if (!hasWeakPassword && !hasDuplicatePasswords) {
     createAlertMessage(
       "✅ No security vulnerabilities detected. Your passwords are safe!",
@@ -68,15 +70,15 @@ function createAlertMessage(message, type) {
   const alertDiv = document.createElement("div");
   alertDiv.classList.add("alert-message");
 
-  // Add appropriate class for alert type
   if (type === "critical") {
-    alertDiv.classList.add("critical-alert");
+    alertDiv.style.background = "#ee2e31"; // Red for critical alerts
   } else if (type === "warning") {
-    alertDiv.classList.add("warning-alert");
+    alertDiv.style.background = "#ffcc00"; // Yellow for warnings
   } else {
-    alertDiv.classList.add("safe-alert");
+    alertDiv.style.background = "#28a745"; // Green for safe status
   }
 
   alertDiv.innerHTML = message;
   alertMessages.appendChild(alertDiv);
 }
+});

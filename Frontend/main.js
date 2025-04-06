@@ -30,7 +30,6 @@ ipcMain.on("login", (event, { email, password }) => {
       response = { status: "success", fullname };
     }
     event.reply("login-response", response);
-    //event.reply("login-response", NEWUSER === "1" ? {status : "success" , fullname}: "fail");
   } catch (error) {
     console.error("native module crashed:", error);
     event.reply("login-reponse", "error");
