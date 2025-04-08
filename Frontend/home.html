@@ -9,11 +9,10 @@
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Share+Tech+Mono&family=VT323&display=swap"
       rel="stylesheet"
     />
-
-    <script
-      src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"
-    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
   </head>
   <body>
     <div class="dashboard-container">
@@ -61,15 +60,16 @@
         <section class="password-list">
           <h3>Stored Passwords</h3>
           <div class="accounts" id="accountList">
+            <!-- Dynamically populated via JS -->
           </div>
         </section>
       </div>
     </div>
 
-    <!-- Modern Pop-up Window -->
+    <!-- Add/Edit Password Modal -->
     <div id="passwordPopup" class="popup">
       <div class="popup-content">
-        <span class="close-btn" onclick="closePasswordPopup()">×</span>
+        <span class="close-btn" onclick="closePasswordPopup()">&times;</span>
         <h2>Add a New Password</h2>
         <label>Website/App Name:</label>
         <input type="text" id="siteName" required />
@@ -83,6 +83,29 @@
         <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
           Save New Password
         </button>
+      </div>
+    </div>
+
+    <!-- PIN Code Modal -->
+    <div id="pin-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Enter PIN Code</h2>
+        <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" />
+        <button onclick="verifyPin()">Verify</button>
+        <button onclick="closePinModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation" class="modal hidden">
+      <div class="modal-content">
+        <h3>Are you sure you want to delete your password?</h3>
+        <p>
+          It will be stored in the "deleted passwords" for 30 days and then
+          deleted permanently.
+        </p>
+        <button onclick="deletePasswordConfirmed()">Yes, delete</button>
+        <button onclick="closeDeleteModal()">Cancel</button>
       </div>
     </div>
 
