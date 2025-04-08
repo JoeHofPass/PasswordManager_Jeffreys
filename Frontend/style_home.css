@@ -432,3 +432,167 @@ body.light .btn-add {
     inset 0 0 2px rgba(255, 255, 255, 0.04);
   transform: translateY(-2px);
 }
+.icon-row {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+.edit-icon,
+.delete-icon {
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px transparent;
+}
+
+.edit-icon {
+  color: #ffaa00;
+  background-color: rgba(255, 170, 0, 0.1);
+}
+
+.edit-icon:hover {
+  background-color: rgba(255, 170, 0, 0.2);
+  box-shadow: 0 0 6px #ffaa00;
+}
+
+.delete-icon {
+  color: #ff0033;
+  background-color: rgba(255, 0, 51, 0.1);
+}
+
+.delete-icon:hover {
+  background-color: rgba(255, 0, 51, 0.2);
+  box-shadow: 0 0 6px #ff0033;
+}
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #0b0f1c;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.4);
+  color: #00ffe1;
+  text-align: center;
+  width: 400px;
+  font-family: "Orbitron", sans-serif;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 8px;
+  border: 1px solid #00ffe1;
+  background: #000c18;
+  color: #00ffe1;
+  font-size: 1.1em;
+}
+
+.modal-content button {
+  margin: 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-family: "Orbitron", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-content button:first-of-type {
+  background-color: #00ffe1;
+  color: #000;
+}
+
+.modal-content button:first-of-type:hover {
+  background-color: #00ffaa;
+  box-shadow: 0 0 12px #00ffc3;
+}
+
+.modal-content button:last-of-type {
+  background-color: #444;
+  color: #fff;
+}
+
+.modal-content button:last-of-type:hover {
+  background-color: #666;
+}
+.modal-content h3,
+.modal-content p {
+  margin-bottom: 15px;
+  font-family: "Share Tech Mono", monospace;
+}
+.password-box {
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border: 1px solid #ff00cc;
+  border-radius: 12px;
+  box-shadow: 0 0 18px #ff00cc;
+  transition: 0.3s ease-in-out;
+}
+
+.password-box:hover {
+  box-shadow: 0 0 25px #ff26a6;
+  border-color: #ff26a6;
+}
+
+/* Icon row for edit/delete buttons */
+.icon-row {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* Edit icon (pencil) */
+.edit-icon {
+  color: #ffaa00;
+  font-size: 14px;
+  background: rgba(255, 170, 0, 0.1);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-icon:hover {
+  background: rgba(255, 170, 0, 0.2);
+  box-shadow: 0 0 8px #ffaa00;
+}
+
+/* Delete icon (trash) */
+.delete-icon {
+  color: #ff0033;
+  font-size: 14px;
+  background: rgba(255, 0, 51, 0.1);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-icon:hover {
+  background: rgba(255, 0, 51, 0.2);
+  box-shadow: 0 0 8px #ff0033;
+}
