@@ -81,6 +81,19 @@ Napi::String GetDeletedPasswords(const Napi::CallbackInfo& credentials){
     return Napi::String::New(env, JSON);
 }
 
+Napi::String RestoreOrDeletePassword(const Napi::CallbackInfo& credentials){
+    Napi::Env env = credentials.Env();
+    Napi::String username = credentials[0].As<Napi::String>();
+    Napi::String serviceName = credentials[1].As<Napi::String>();
+    Napi::String restoreOrdelete = credentials[2].As<Napi::String>();
+
+    if(restoreOrDeletePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), restoreOrdelete.Utf8Value().c_str())){
+        return Napi::String::New(env, "1");
+    } else {
+        return Napi::String::New(env, "0");
+    }
+}
+
 Napi::String Main(const Napi::CallbackInfo& credentials) {
     Napi::Env env = credentials.Env();
     if (sodium_init() < 0) {
@@ -97,6 +110,7 @@ Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
     exports.Set("verifyUser", Napi::Function::New(credentials, VerifyUser));
     exports.Set("verifyPin", Napi::Function::New(credentials, VerifyPin));
     exports.Set("getPasswords", Napi::Function::New(credentials, GetPasswords));
+    exports.Set("restoreOrDeletePassword", Napi::Function::New(credentials, RestoreOrDeletePassword));
     exports.Set("getDeletedPasswords", Napi::Function::New(credentials, GetDeletedPasswords));
     exports.Set(Napi::String::New(credentials, "Main"), Napi::Function::New(credentials, Main));
 

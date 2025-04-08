@@ -98,29 +98,32 @@ document.addEventListener("DOMContentLoaded", () => {
             //console.log("Listening for get-password-response");
             const accountList = document.getElementById("accountList");
             //console.log("recieved passwords:", passwords);
-            accountList.innerHTML = "";
             passwords.forEach(password => {
                 let domain = password.service.toLowerCase().replace(/\s+/g, "");
                 if (!domain.includes(".")) {
                     domain += ".com";
                 }
-
                 const logoURL = `https://logo.clearbit.com/${domain}`;
-                const accountCard = document.createElement("div");
-                accountCard.classList.add("account-card");
+                const id = Date.now(); // simple unique ID
 
-                accountCard.innerHTML = `
-            <img src="${logoURL}" onerror="this.onerror=null;this.src='default_logo.png';" alt="${password.service}" class="site-logo" />
-            <div class="account-info">
-                <strong>${password.service}</strong>
-                <p>${password.username}</p>
-                <div class="password-container">
-                    <input type="password" value="${password.password}" class="password-field" readonly />
-                    <button class="toggle-password" onclick="togglePassword(this)">👁</button>
-                </div>
-            </div>
-        `;
-                accountList.appendChild(accountCard);
+                const newAccount = document.createElement("div");
+                newAccount.classList.add("password-box");
+                newAccount.style.position = "relative";
+
+                newAccount.innerHTML = `
+                     <div class="icon-row">
+                        <i class="fas fa-pencil-alt edit-icon" title="Edit password" onclick="promptPin('edit', '${id}')"></i>
+                        <i class="fas fa-trash-alt delete-icon" title="Delete password" onclick="confirmDelete('${id}')"></i>
+                    </div>
+                    <h4>${password.service}</h4>
+                    <p>${password.username}</p>
+                    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='default_logo.png';" />
+                    <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
+                    <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                `;
+                accountList.appendChild(newAccount);
             });
         });
     } else {

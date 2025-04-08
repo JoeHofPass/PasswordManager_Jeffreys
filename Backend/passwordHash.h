@@ -11,5 +11,9 @@ int verifyUser(const char *username, const char *password);
 int verifyPin(const char *username, const char *pin);
 string getPasswords(const char *username);
 string getDeletedPasswords(const char *username);
+int restoreOrDeletePassword(const char *username, const char *serviceName, const char *zeroORone);
+
+//void permanentalyDeletePassword();
+
 
 #endif
