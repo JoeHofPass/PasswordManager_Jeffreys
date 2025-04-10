@@ -546,13 +546,12 @@ body.light .btn-add {
   padding: 20px;
   border: 1px solid #ff00cc;
   border-radius: 12px;
-  box-shadow: 0 0 18px #ff00cc;
-  transition: 0.3s ease-in-out;
 }
 
 .password-box:hover {
   box-shadow: 0 0 25px #ff26a6;
   border-color: #ff26a6;
+  transition: 0.3s ease-in-out;
 }
 
 /* Icon row for edit/delete buttons */
