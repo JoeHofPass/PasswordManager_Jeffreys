@@ -8,7 +8,7 @@
 #include "passwordHash.h"
 using namespace std;
 
-// #define DB_CONN "dbname=GateKeep user=postgres password=IntersteLL@r_@5201 host=localhost port=5433"
+//#define DB_CONN "dbname=GateKeep user=postgres password=IntersteLL@r_@5201 host=localhost port=5433"
 #define DB_CONN "dbname=GateKeep user=teamuser password=IntersteLL@r_@5202 host=database-1.c3yyqymmofip.us-east-2.rds.amazonaws.com port=5432"
 
 // add new password
@@ -307,12 +307,12 @@ int restoreOrDeletePassword(const char *username, const char *serviceName, const
     PQclear(IDres);
     const char *paramValues2[] = {userID, serviceName};
 
-    if (zeroORone == "1")
+    if (strcmp(zeroORone, "1") == 0)
     {
         const char *callPasswords = "UPDATE credentials SET is_deleted = false, deleted_at = null WHERE user_id = $1 and service_name = $2";
         PGresult *res = PQexecParams(conn, callPasswords, 2, NULL, paramValues2, NULL, NULL, 0);
 
-        if (PQresultStatus(res) != PGRES_TUPLES_OK)
+        if (PQresultStatus(res) != PGRES_COMMAND_OK)
         {
             fprintf(stderr, "failed to restore password %s\n", PQerrorMessage(conn));
             PQclear(res);
@@ -321,13 +321,13 @@ int restoreOrDeletePassword(const char *username, const char *serviceName, const
         }
         else
         {
-            printf("password restore");
+            printf("password restore \n");
             PQclear(res);
             PQfinish(conn);
             return 1;
         }
     }
-    else if (zeroORone == "0")
+    else if (strcmp(zeroORone, "0") == 0)
     {
         const char *toDelete = "UPDATE credentials SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE user_id = $1 and service_name = $2";
         PGresult *res = PQexecParams(conn, toDelete, 2, NULL, paramValues2, NULL, NULL, 0);
@@ -341,7 +341,7 @@ int restoreOrDeletePassword(const char *username, const char *serviceName, const
         }
         else
         {
-            printf("password deleted");
+            printf("password deleted \n");
             PQclear(res);
             PQfinish(conn);
             return 1;

@@ -46,6 +46,20 @@ ipcMain.on("register", (event, { fullname, email, password, pin }) => {
   }
 });
 
+ipcMain.on("pin", (event, { email, pin }) => {
+  try {
+    const PIN = addon.verifyPin(email, pin);
+    let response = { status: "fail" };
+    if (PIN === "1") {
+      response = { status: "success" };
+    }
+    event.reply("pin-response", response);
+  } catch (error) {
+    console.error("native module crashed:", error);
+    event.reply("pin-reponse", "error");
+  }
+});
+
 ipcMain.on(
   "store-password",
   (event, { email, serviceName, serviceUsername, servicePassword }) => {
@@ -78,6 +92,16 @@ ipcMain.on("get-passwords", (event, { email }) => {
   } catch (error) {
     console.error("native module crashed:", error);
     event.reply("get-passwords-response", "error");
+  }
+});
+
+ipcMain.on("restoreORdelete", (event, { email, serviceName, zeroORone }) => {
+  try{
+    const result = addon.restoreOrDeletePassword(email, serviceName, zeroORone);
+    event.reply("restoreORdelete-response", result === "1" ? "success" : "fail");
+  } catch (error) {
+    console.error("native module crashed:", error);
+    event.reply("restoreORdelete-response", "error");
   }
 });
 

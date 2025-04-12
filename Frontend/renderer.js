@@ -3,11 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register-form");
     const passwordPopup = document.getElementById("passwordPopup");
     const accounts = document.getElementById("accountList");
-
-    const current = localStorage.getItem("currentUserEmail");
-    if (current && accounts) {
-        window.electron.send("get-passwords", { email: current });
-    }
+    const deletePassword = document.getElementById("delete-confirmation");
+    const pinCheck = document.getElementById("pin-form");
+    const restorePassword = document.getElementById("restore-confirmation");
 
     if (loginForm) {
         document.getElementById("login-form").addEventListener("submit", (event) => {
@@ -30,10 +28,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("currentUserEmail", email);
                 localStorage.setItem("currentUsername", response.fullname);
                 window.location.href = "home.html";
-                // window.electron.send("get-passwords", { email });
-
             } else {
                 console.log("Login failed!");
+            }
+        });
+    }
+
+    if (pinCheck) {
+        document.getElementById("verifypinbtn").addEventListener("click", (event) => {
+            event.preventDefault();
+            const current = localStorage.getItem("currentUserEmail");
+
+            const pin = document.getElementById("pin-input").value;
+
+            if (!window.electron) {
+                console.error("Electron API not found!");
+                return;
+            }
+            window.electron.send("pin", { email: current, pin });
+
+        });
+        window.electron.on("pin-response", (response) => {
+            if (response.status === "success") {
+                console.log("pin successful!");
+                closePinModal();
+                openEditWindow(currentPasswordId);
+            } else {
+                console.log("pin failed!");
             }
         });
     }
@@ -92,8 +113,59 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+    if(deletePassword){
+        document.getElementById("deletepassbtn").addEventListener("click", (event) => {
+            event.preventDefault();
+            const email = localStorage.getItem("currentUserEmail");
+            const zeroORone = "0";
+            const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
+            const serviceName = card?.querySelector("h4")?.innerText;
+            if (!window.electron) {
+                console.error("Electron API not found!");
+                return;
+            }
+            window.electron.send("restoreORdelete", { email, serviceName, zeroORone});
+            //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
+        });
+        window.electron.on("restoreORdelete-response", (response) => {
+            //console.log("restoreORdelete-response:", response);
+
+            if(response === "success"){
+                deletePasswordConfirmed();
+            }else {
+                console.log("Failed to delete password");
+            }
+        });
+    }
+
+    if(restorePassword){
+        document.getElementById("confirmBtn").addEventListener("click", (event) => {
+            event.preventDefault();
+            const email = localStorage.getItem("currentUserEmail");
+            const zeroORone = "1";
+            const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
+            const serviceName = card?.querySelector("h4")?.innerText;
+            if (!window.electron) {
+                console.error("Electron API not found!");
+                return;
+            }
+            window.electron.send("restoreORdelete", { email, serviceName, zeroORone});
+            //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
+        });
+        window.electron.on("restoreORdelete-response", (response) => {
+            //console.log("restoreORdelete-response:", response);
+            if(response === "success"){
+                recoverPassword();
+            }else {
+                console.log("Failed to restore password");
+            }
+        });
+    }
 
     if (accounts) {
+        const current = localStorage.getItem("currentUserEmail");
+        window.electron.send("get-passwords", { email: current });
+
         window.electron.on("get-passwords-response", (passwords) => {
             //console.log("Listening for get-password-response");
             const accountList = document.getElementById("accountList");
@@ -108,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const newAccount = document.createElement("div");
                 newAccount.classList.add("password-box");
+                newAccount.setAttribute("data-id", id);
                 newAccount.style.position = "relative";
 
                 newAccount.innerHTML = `
@@ -117,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <h4>${password.service}</h4>
                     <p>${password.username}</p>
-                    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='default_logo.png';" />
+                    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
                     <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
                     <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
                         <i class="fas fa-eye"></i>
@@ -126,7 +199,5 @@ document.addEventListener("DOMContentLoaded", () => {
                 accountList.appendChild(newAccount);
             });
         });
-    } else {
-        console.log("No passwords to display.");
     }
 })

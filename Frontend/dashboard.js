@@ -1,5 +1,3 @@
-// dashboard.js
-
 function openPasswordPopup() {
   clearInputFields();
   document.getElementById("passwordPopup").style.display = "block";
@@ -77,6 +75,7 @@ function saveNewPassword() {
 
   const accountList = document.getElementById("accountList");
   const newAccount = document.createElement("div");
+  newAccount.setAttribute("data-id", id);
   newAccount.classList.add("password-box");
   newAccount.style.position = "relative";
 
@@ -87,7 +86,7 @@ function saveNewPassword() {
     </div>
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
-    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='default_logo.png';" />
+    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
     <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
     <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
       <i class="fas fa-eye"></i>
@@ -145,22 +144,6 @@ function promptPin(action, passwordId) {
   document.getElementById("pin-modal").classList.remove("hidden");
 }
 
-function verifyPin() {
-  const pin = document.getElementById("pin-input").value;
-  const correctPin = "123456";
-
-  if (pin === correctPin) {
-    if (currentAction === "edit") {
-      openEditWindow(currentPasswordId);
-    } else if (currentAction === "unlock") {
-      alert("Session unlocked.");
-    }
-    closePinModal();
-  } else {
-    alert("Invalid PIN. Must be 6 digits.");
-  }
-}
-
 function closePinModal() {
   document.getElementById("pin-modal").classList.add("hidden");
   document.getElementById("pin-input").value = "";
@@ -172,7 +155,10 @@ function confirmDelete(passwordId) {
 }
 
 function deletePasswordConfirmed() {
-  alert(`Password with ID ${currentPasswordId} moved to Deleted`);
+  const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
+  if (card) {
+    card.remove();
+  }
   closeDeleteModal();
 }
 
@@ -182,12 +168,10 @@ function closeDeleteModal() {
 
 function openEditWindow(passwordId) {
   document.getElementById("passwordPopup").style.display = "block";
-  document
-    .getElementById("passwordPopup")
-    .scrollIntoView({ behavior: "smooth" });
-  document.getElementById("siteName").value = "apple";
-  document.getElementById("userEmail").value = "john@gmail.com";
-  document.getElementById("generatedPassword").value = "MyNewPassword123";
+  document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("siteName").value = siteName;
+  document.getElementById("userEmail").value = userEmail;
+  document.getElementById("generatedPassword").value = "test";
 }
 
 function resetInactivityTimer() {
