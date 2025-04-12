@@ -546,13 +546,12 @@ body.light .btn-add {
   padding: 20px;
   border: 1px solid #ff00cc;
   border-radius: 12px;
-  box-shadow: 0 0 18px #ff00cc;
-  transition: 0.3s ease-in-out;
 }
 
 .password-box:hover {
   box-shadow: 0 0 25px #ff26a6;
   border-color: #ff26a6;
+  transition: 0.3s ease-in-out;
 }
 
 /* Icon row for edit/delete buttons */
@@ -595,4 +594,201 @@ body.light .btn-add {
 .delete-icon:hover {
   background: rgba(255, 0, 51, 0.2);
   box-shadow: 0 0 8px #ff0033;
+}
+
+/* ===== DELETED PASSWORDS PAGE ===== */
+.deleted-passwords {
+  margin-top: 20px;
+}
+
+.deleted-passwords h3 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 24px;
+  color: #00ffe1;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#searchBar {
+  padding: 12px 18px;
+  width: 300px;
+  background: rgba(0, 255, 195, 0.08);
+  border: 1px solid #00ffe1;
+  border-radius: 8px;
+  color: #00ffe1;
+  font-size: 1em;
+  transition: 0.3s;
+  box-shadow: 0 0 8px rgba(0, 255, 195, 0.3);
+  margin-bottom: 20px;
+  display: block;
+  margin: 0 auto;
+}
+
+#searchBar:focus {
+  outline: none;
+  border-color: #39ff14;
+}
+
+/* ===== PASSWORD CARD ===== */
+.password-box {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  width: 220px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 255, 195, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.password-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 195, 0.3);
+}
+
+.password-box img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.password-box h4 {
+  font-size: 18px;
+  color: #00ffe1;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.password-box p {
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.password-box .days-left {
+  font-size: 14px;
+  color: #ff9f43;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Action buttons (Recover/Delete) */
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.recover-btn,
+.delete-btn {
+  padding: 10px;
+  border: none;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: "Orbitron", sans-serif;
+  width: 48%;
+}
+
+.recover-btn {
+  background-color: #32cd32; /* Softer, pleasant green */
+}
+
+.recover-btn:hover {
+  background-color: #228b22;
+}
+
+.delete-btn {
+  background-color: #d32f2f; /* Deeper, more intense red */
+}
+
+.delete-btn:hover {
+  background-color: #b71c1c;
+}
+
+.recover-btn,
+.delete-btn {
+  color: #fff;
+  text-align: center;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s ease;
+}
+
+.modal-content {
+  background-color: #2a2d48;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  color: #00ffe1;
+  font-family: "Orbitron", monospace;
+}
+
+.modal-content button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #00ffe1;
+  color: #000;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  font-family: "Orbitron", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.modal-content button:first-of-type {
+  background-color: #00ffe1;
+}
+
+.modal-content button:first-of-type:hover {
+  background-color: #00ffaa;
+  box-shadow: 0 0 12px #00ffc3;
+}
+
+.modal-content button:last-of-type {
+  background-color: #444;
+  color: #fff;
+}
+
+.modal-content button:last-of-type:hover {
+  background-color: #666;
+}
+
+.modal.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* ===== MODAL CLOSE BUTTON ===== */
+.close-btn {
+  font-size: 1.6em;
+  color: #ffffff;
+  align-self: flex-end;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #00bfff;
 }
