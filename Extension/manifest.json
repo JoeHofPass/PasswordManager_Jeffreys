@@ -1,6 +1,6 @@
 {
     "name": "GateKeep",
-    "description": "A password manager extension",
+    "description": "A secure password manager extension",
     "version": "1.0",
     "manifest_version": 3,
     "icons": {

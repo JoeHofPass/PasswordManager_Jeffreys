@@ -1,16 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if the user is logged in
-    chrome.storage.local.get("isLoggedIn", (data) => {
-      if (!data.isLoggedIn) {
-        window.location.href = "popup.html"; // Redirect to login if not logged in
+    chrome.storage.local.get("loggedIn", (data) => {
+      if (!data.loggedIn) {
+        window.location.href = "login_extension.html"
       }
-    });
-  
-    // Logout functionality
-    document.getElementById('logout').addEventListener('click', () => {
-      chrome.storage.local.set({ "isLoggedIn": false }, () => {
-        window.location.href = "popup.html";  // Redirect to login page
-      });
-    });
-  });
-  
+    })
+
+    document.getElementById("logout")?.addEventListener("click", () => {
+      chrome.storage.local.set({ loggedIn: false }, () => {
+        window.location.href = "login_extension.html"
+      })
+    })
+
+    document.getElementById("openPasswordPopup").addEventListener("click", () => {
+      document.getElementById("passwordPopup").style.display = "block"
+    })
+
+    document.getElementById("closePasswordPopup").addEventListener("click", () => {
+      document.getElementById("passwordPopup").style.display = "none";
+    }) 
+
+    document.getElementById("genPassword").addEventListener("click", () => {
+      const length = 16;
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById("generatedPassword").value = password;
+    })
+  })

@@ -152,6 +152,7 @@ section span:hover {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  text-align: center;
 }
   
 .btn:hover {

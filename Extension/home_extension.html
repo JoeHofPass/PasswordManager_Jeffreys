@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="styles_extension.css">
+  <link rel="stylesheet" href="styles_home_extension.css">
+  <script src="home_extension.js"></script>
 </head>
 <body>
-  <h2>Welcome to Your Password Manager</h2>
-  <button id="logout">Logout</button>
-  <script src="home.js"></script>
+  <div class="dashboard-container">
+    <div class="main-content">
+      <header>
+        <h2>Passwords</h2>
+        <input type="text" id="searchBar" placeholder="Search passwords..." />
+        <button class="btn-add" id="openPasswordPopup">
+          + ADD NEW PASSWORD
+        </button>
+      </header>
+      <!-- Password List -->
+      <section class="password-list">
+        <h3>Stored Passwords</h3>
+        <div class="accounts" id="accountList">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+      <!-- Add/Edit Password Modal -->
+      <div id="passwordPopup" class="popup">
+        <div class="popup-content">
+          <span class="close-btn" id="closePasswordPopup">&times;</span>
+          <h2>Add a New Password</h2>
+          <label>Website/App Name:</label>
+          <input type="text" id="siteName" required />
+          <label>Email/Username:</label>
+          <input type="email" id="userEmail" required />
+          <label>Password:</label>
+          <input type="text" id="generatedPassword" />
+          <button class="btn-generate" id="genPassword">
+            Generate Password
+          </button>
+          <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
+            Save New Password
+          </button>
+        </div>
+      </div>
+      <button id="logout"><i class="fas fa-sign-out-alt"></i>Logout</button>
+    </div>
+  </div>
 </body>
 </html>
