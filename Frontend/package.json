@@ -4,19 +4,19 @@
   "description": "All frontend components of the desktop application will be in this folder.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "npx electron .",
+    "rebuild": "npx electron-rebuild -v 34.3.0"
   },
   "dependencies": {
-    "node-addon-api": "*"
+    "node-addon-api": "^8.3.1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "electron": "^34.3.0",
     "electron-rebuild": "^3.2.9",
     "nan": "^2.22.2",
     "node-gyp": "^11.1.0"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

@@ -1,10 +1,13 @@
 {
   "scripts": {
-    "start": "cd frontend && npx electron/rebuild && cd .. && node-gyp configure && node-gyp build && cd frontend && npm start",
+    "start": "cd frontend && npx electron-rebuild -v 34.3.0 && cd .. && node-gyp configure && node-gyp build && cd frontend && npm start",
     "postinstall": "copy \"C:\\Program Files\\PostgreSQL\\17\\bin\\libpq.dll\" .\\build\\Release\\ && copy \"C:\\Program Files\\libsodium\\bin\\libsodium.dll\" .\\build\\Release\\"
   },
   "dependencies": {
     "nan": "^2.22.2",
     "node-addon-api": "^8.3.1"
+  },
+  "devDependencies": {
+    "electron": "^35.1.5"
   }
 }

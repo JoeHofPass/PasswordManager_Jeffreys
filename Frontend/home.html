@@ -1,110 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GateKeep - Dashboard</title>
+    <link rel="stylesheet" href="style_home.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GateKeep - Dashboard</title>
-  <link rel="stylesheet" href="style_home.css" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Share+Tech+Mono&family=VT323&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Share+Tech+Mono&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
 
-<body>
-  <div class="dashboard-container">
-    <div class="sidebar">
-      <div class="logo">
-        <img src="gatekeep4.png" alt="GateKeep Logo" class="logo-img" />
-      </div>
-      <ul>
-        <li>
-          <a href="home.html" class="active"><i class="fas fa-key"></i> Passwords</a>
-        </li>
-        <li>
-          <a href="alerts.html" id="securityAlerts"><i class="fas fa-exclamation-triangle"></i> Security Alerts</a>
-        </li>
-        <li>
-          <a href="deletedPasswords.html"><i class="fas fa-trash"></i> Deleted</a>
-        </li>
-        <li>
-          <a href="account.html"><i class="fas fa-user"></i> Account</a>
-        </li>
-        <li>
-          <a href="login.html" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Logout</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="main-content">
-      <header>
-        <h2>Passwords</h2>
-        <input type="text" id="searchBar" placeholder="Search passwords..." />
-        <button class="btn-add" onclick="openPasswordPopup()">
-          + ADD NEW PASSWORD
-        </button>
-      </header>
-
-      <!-- Password List -->
-      <section class="password-list">
-        <h3>Stored Passwords</h3>
-        <div class="accounts" id="accountList">
-          <!-- Dynamically populated via JS -->
+  <body>
+    <div class="dashboard-container">
+      <div class="sidebar">
+        <div class="logo">
+          <img src="gatekeep4.png" alt="GateKeep Logo" class="logo-img" />
         </div>
-      </section>
-    </div>
-  </div>
+        <ul>
+          <li>
+            <a href="home.html" class="active"
+              ><i class="fas fa-key"></i> Passwords</a
+            >
+          </li>
+          <li>
+            <a href="alerts.html" id="securityAlerts"
+              ><i class="fas fa-exclamation-triangle"></i> Security Alerts</a
+            >
+          </li>
+          <li>
+            <a href="deletedPasswords.html"
+              ><i class="fas fa-trash"></i> Deleted</a
+            >
+          </li>
+          <li>
+            <a href="account.html"><i class="fas fa-user"></i> Account</a>
+          </li>
+          <li>
+            <a href="login.html" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Logout</a
+            >
+          </li>
+        </ul>
+      </div>
 
-  <!-- Add/Edit Password Modal -->
-  <div id="passwordPopup" class="popup">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePasswordPopup()">&times;</span>
-      <h2>Add a New Password</h2>
-      <label>Website/App Name:</label>
-      <input type="text" id="siteName" required />
-      <label>Email/Username:</label>
-      <input type="email" id="userEmail" required />
-      <label>Password:</label>
-      <input type="text" id="generatedPassword" />
-      <button class="btn-generate" onclick="generatePassword()">
-        Generate Password
-      </button>
-      <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
-        Save New Password
-      </button>
-    </div>
-  </div>
+      <div class="main-content">
+        <header>
+          <h2>Passwords</h2>
+          <input type="text" id="searchBar" placeholder="Search passwords..." />
+          <button class="btn-add" onclick="openPasswordPopup()">
+            + ADD NEW PASSWORD
+          </button>
+        </header>
 
-  <!-- PIN Code Modal -->
-  <form id="pin-form">
-    <div id="pin-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2>Enter PIN Code</h2>
-        <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" />
-        <button id="verifypinbtn">Verify</button>
-        <button onclick="closePinModal()">Cancel</button>
+        <!-- Password List -->
+        <section class="password-list">
+          <h3>Stored Passwords</h3>
+          <div class="accounts" id="accountList">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </section>
       </div>
     </div>
-  </form>
 
-
-  <!-- Delete Confirmation Modal -->
-  <div id="delete-confirmation" class="modal hidden">
-    <div class="modal-content">
-      <h3>Are you sure you want to delete your password?</h3>
-      <p>
-        It will be stored in the "deleted passwords" for 30 days and then
-        deleted permanently.
-      </p>
-      <button id="deletepassbtn">Yes, delete</button>
-      <button onclick="closeDeleteModal()">Cancel</button>
+    <!-- Add/Edit Password Modal -->
+    <div id="passwordPopup" class="popup">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePasswordPopup()">&times;</span>
+        <h2>Add a New Password</h2>
+        <label>Website/App Name:</label>
+        <input type="text" id="siteName" required />
+        <label>Email/Username:</label>
+        <input type="email" id="userEmail" required />
+        <label>Password:</label>
+        <input type="text" id="generatedPassword" />
+        <button class="btn-generate" onclick="generatePassword()">
+          Generate Password
+        </button>
+        <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
+          Save New Password
+        </button>
+      </div>
     </div>
-  </div>
 
-  <script src="dashboard.js"></script>
-  <script src="renderer.js"></script>
-</body>
+    <!-- PIN Code Modal -->
+    <form id="pin-form">
+      <div id="pin-modal" class="modal hidden">
+        <div class="modal-content">
+          <h2>Enter PIN Code</h2>
+          <input type="password" id="pin-input" maxlength="6" pattern="\d{6}" />
+          <button type="submit" id="verifypinbtn">Verify</button>
+          <button id="cancel-pin-btn" onclick="closePinModal()">Cancel</button>
+        </div>
+      </div>
+    </form>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation" class="modal hidden">
+      <div class="modal-content">
+        <h3>Are you sure you want to delete your password?</h3>
+        <p>
+          It will be stored in the "deleted passwords" for 30 days and then
+          deleted permanently.
+        </p>
+        <button id="deletepassbtn">Yes, delete</button>
+        <button onclick="closeDeleteModal()">Cancel</button>
+      </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script src="renderer.js"></script>
+    <script src="watchDog.js"></script>
+  </body>
 </html>

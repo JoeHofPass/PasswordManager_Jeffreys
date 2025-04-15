@@ -13,15 +13,32 @@
         <form id="register-form">
           <div class="form-group">
             <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" name="fullname" placeholder="Full Name" required/>
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
+              placeholder="Full Name"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email"id="email" name="email" placeholder="Email" required/>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password" required
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
               oninput="checkStrength()"
               autocomplete="new-password"
             />
@@ -31,14 +48,27 @@
           </div>
           <div class="form-group">
             <label for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              placeholder="Confirm Password"
+              required
               oninput="checkMatch()"
             />
             <div id="password-match" class="password-match"></div>
           </div>
           <div class="form-group">
             <label for="pin">Pin</label>
-            <input type="pin"id="pin" name="pin" placeholder="Pin" pattern="\d{6}" required title = "Please set a 6 digit pin."/>
+            <input
+              type="pin"
+              id="pin"
+              name="pin"
+              placeholder="Pin"
+              pattern="\d{6}"
+              required
+              title="Please set a 6 digit pin."
+            />
           </div>
           <div class="form-group">
             <input type="checkbox" id="terms" required />
@@ -91,5 +121,8 @@
       }
     </script>
     <script src="renderer.js"></script>
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+    </div>
   </body>
 </html>
