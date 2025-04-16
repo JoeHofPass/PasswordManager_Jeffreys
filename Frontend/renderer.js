@@ -6,9 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const deletePassword = document.getElementById("delete-confirmation");
     const pinCheck = document.getElementById("pin-form");
     const restorePassword = document.getElementById("restore-confirmation");
+    const fileBtn = document.getElementById("selectFile");
+    const fileInput = document.getElementById("fileInput");
 
     if (loginForm) {
-        document.getElementById("login-form").addEventListener("submit", (event) => {
+        loginForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
             const email = document.getElementById("email").value;
@@ -60,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (registerForm) {
-        document.getElementById("register-form").addEventListener("submit", (event) => {
+        registerForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
             const fullname = document.getElementById("fullname").value;
@@ -198,6 +200,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 accountList.appendChild(newAccount);
             });
+        });
+    }
+
+    if(fileBtn && fileInput){
+        fileBtn.addEventListener("click", () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+    
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    const email = localStorage.getItem("currentUserEmail");
+                    const entries = results.data.map(entry => ({
+                        service: entry.service || entry.website || entry.url || "Not provided",
+                        username: entry.username || entry.email || "Not provided",
+                        password: entry.password || entry.pass
+                    }));
+                    let importSuccess = 0;
+                    let importFail = 0;
+                    entries.forEach(entry => {
+                        window.electron.send("store-password", { email, serviceName: entry.service, serviceUsername: entry.username, servicePassword: entry.password });
+                        window.electron.once("storePassword-response", (response) => {
+                            if (response === "success") {
+                                importSuccess++;
+                            } else {
+                                importFail++;
+                            }
+                            if(importSuccess + importFail === entries.length){
+                                alert(importSuccess + " password(s) were successfully imported.");
+                                console.log(`${importSuccess} passwords imported, ${importFail} failed to import.`);
+                            }
+                        });
+                    });
+                }
+            })
         });
     }
 })

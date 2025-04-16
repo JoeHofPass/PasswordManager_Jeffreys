@@ -259,6 +259,19 @@ input:checked + .slider:before {
   box-shadow: 0 0 12px #ff0033;
 }
 
+#selectFile {
+  background: #00ffe1;
+  color: #000;
+  padding: 8px 20px;
+  font-family: "Orbitron", sans-serif;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px #00ffe1;
+}
+
 /* ===== SEE PASSWORD TOGGLE ===== */
 .toggle-password {
   background: none;

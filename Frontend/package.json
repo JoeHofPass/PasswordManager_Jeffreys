@@ -8,7 +8,8 @@
     "start": "electron ."
   },
   "dependencies": {
-    "node-addon-api": "*"
+    "node-addon-api": "*",
+    "papaparse": "^5.5.2"
   },
   "keywords": [],
   "author": "",
