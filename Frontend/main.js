@@ -48,13 +48,15 @@ ipcMain.on("register", (event, { fullname, email, password, pin }) => {
 
 ipcMain.on("verify-pin", (event, { email, pin }) => {
   try {
-    console.log("🔐 Verifying PIN for:", email);
-    const result = addon.verifyPin(email, pin);
-    console.log("✅ Native module returned:", result);
-    event.reply("verify-pin-response", result === 1 || result === "1");
+    const PIN = addon.verifyPin(email, pin);
+    let response = { status: "fail" };
+    if (PIN === "1") {
+      response = { status: "success" };
+    }
+    event.reply("verify-pin-response", response);
   } catch (error) {
-    console.error("verify-pin IPC failed:", error);
-    event.reply("verify-pin-response", false);
+    console.error("native module crashed:", error);
+    event.reply("verify-pin-reponse", "error");
   }
 });
 

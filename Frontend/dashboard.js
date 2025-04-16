@@ -88,15 +88,10 @@ function saveNewPassword() {
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
     <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
-<div class="password-actions">
-  <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
-    <i class="fas fa-eye"></i>
-  </button>
-  <button class="copy-password" onclick="copyPassword(this)" title="Copy password">
-    <i class="fas fa-copy"></i>
-  </button>
-</div>
+    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+    <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
+      <i class="fas fa-eye"></i>
+    </button>
   `;
 
   accountList.appendChild(newAccount);
@@ -166,18 +161,12 @@ let currentPasswordId = null;
 function promptPin(action, passwordId) {
   currentAction = action;
   currentPasswordId = passwordId;
-
-  const cancelButton = document.getElementById("cancel-pin-btn");
-
-  if (action === "unlock") {
-    cancelButton.textContent = "Logout";
-    cancelButton.onclick = logout;
-  } else {
-    cancelButton.textContent = "Cancel";
-    cancelButton.onclick = closePinModal;
-  }
-
   document.getElementById("pin-modal").classList.remove("hidden");
+}
+
+function closePinModal() {
+  document.getElementById("pin-modal").classList.add("hidden");
+  document.getElementById("pin-input").value = "";
 }
 
 function confirmDelete(passwordId) {
@@ -186,9 +175,7 @@ function confirmDelete(passwordId) {
 }
 
 function deletePasswordConfirmed() {
-  const card = document.querySelector(
-    `.password-box[data-id="${currentPasswordId}"]`
-  );
+  const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
   if (card) {
     card.remove();
   }
@@ -201,9 +188,7 @@ function closeDeleteModal() {
 
 function openEditWindow(passwordId) {
   document.getElementById("passwordPopup").style.display = "block";
-  document
-    .getElementById("passwordPopup")
-    .scrollIntoView({ behavior: "smooth" });
+  document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;
   document.getElementById("generatedPassword").value = "test";
@@ -213,7 +198,7 @@ function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
     promptPin("unlock", null);
-  }, 1 * 60 * 1000);
+  }, 3 * 60 * 1000);
 }
 
 ["click", "mousemove", "keypress"].forEach((evt) =>
@@ -237,37 +222,6 @@ function cancelPin() {
   }
   closePinModal();
 }
-
-// Main PIN verification flow
-document.getElementById("verifypinbtn").addEventListener("click", function (e) {
-  e.preventDefault();
-  const pin = document.getElementById("pin-input").value.trim();
-  const currEmail = localStorage.getItem("currentUserEmail");
-  if (!pin || !currEmail) return;
-
-  window.electron.send("verify-pin", { email: currEmail, pin });
-
-  window.electron.once("verify-pin-response", (isValid) => {
-    console.log(
-      "📩 Received PIN verification response:",
-      isValid,
-      typeof isValid
-    );
-
-    if (isValid === true || isValid === "true") {
-      if (currentAction === "access-deleted") {
-        window.location.href = "deletedPasswords.html";
-      } else if (currentAction === "edit") {
-        openEditWindow(currentPasswordId);
-      } else if (currentAction === "unlock") {
-        alert("Session unlocked.");
-      }
-      closePinModal();
-    } else {
-      alert("Incorrect PIN. Access denied.");
-    }
-  });
-});
 
 function closePinModal() {
   document.getElementById("pin-modal").classList.add("hidden");
