@@ -46,17 +46,15 @@ ipcMain.on("register", (event, { fullname, email, password, pin }) => {
   }
 });
 
-ipcMain.on("pin", (event, { email, pin }) => {
+ipcMain.on("verify-pin", (event, { email, pin }) => {
   try {
-    const PIN = addon.verifyPin(email, pin);
-    let response = { status: "fail" };
-    if (PIN === "1") {
-      response = { status: "success" };
-    }
-    event.reply("pin-response", response);
+    console.log("🔐 Verifying PIN for:", email);
+    const result = addon.verifyPin(email, pin);
+    console.log("✅ Native module returned:", result);
+    event.reply("verify-pin-response", result === 1 || result === "1");
   } catch (error) {
-    console.error("native module crashed:", error);
-    event.reply("pin-reponse", "error");
+    console.error("verify-pin IPC failed:", error);
+    event.reply("verify-pin-response", false);
   }
 });
 
@@ -96,9 +94,12 @@ ipcMain.on("get-passwords", (event, { email }) => {
 });
 
 ipcMain.on("restoreORdelete", (event, { email, serviceName, zeroORone }) => {
-  try{
+  try {
     const result = addon.restoreOrDeletePassword(email, serviceName, zeroORone);
-    event.reply("restoreORdelete-response", result === "1" ? "success" : "fail");
+    event.reply(
+      "restoreORdelete-response",
+      result === "1" ? "success" : "fail"
+    );
   } catch (error) {
     console.error("native module crashed:", error);
     event.reply("restoreORdelete-response", "error");

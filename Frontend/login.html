@@ -14,11 +14,23 @@
         <form id="login-form">
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Email" required/>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password" required/>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
           </div>
           <button type="submit" name="login" class="btn">Login</button>
         </form>
@@ -28,5 +40,8 @@
       </div>
     </section>
     <script src="renderer.js"></script>
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+    </div>
   </body>
 </html>

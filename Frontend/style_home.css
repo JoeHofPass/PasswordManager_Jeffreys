@@ -618,3 +618,132 @@ body.light .btn-add {
   cursor: pointer;
   transition: 0.2s ease;
 }
+
+/* Restore icon (undo) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #1b1b2f;
+  padding: 30px;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+  text-align: center;
+}
+
+.modal-content input {
+  padding: 10px;
+  font-size: 20px;
+  width: 80%;
+  border: none;
+  border-radius: 5px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #00aaff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #ff4e4e;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== PIN MODAL ===== */
+body.locked *:not(#pin-modal):not(#pin-modal *) {
+  pointer-events: none;
+  filter: blur(2px);
+}
+/* Copy passwords button */
+.password-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.copy-password {
+  background: transparent;
+  border: none;
+  color: #00bfff;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.copy-password:hover {
+  color: #008cba;
+  transform: scale(1.2);
+}
+
+/* ==== HIGH-CONTRAST, LEGIBLE ALERT STYLES ==== */
+.alert-message {
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 18px 24px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border-left: 6px solid;
+  letter-spacing: 0.4px;
+  line-height: 1.5;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔴 Critical Alert */
+.alert-message.critical {
+  background-color: #2a0002;
+  border-color: #ff4d4d;
+  color: #ffb3b3;
+}
+
+/* 🟠 Warning Alert */
+.alert-message.warning {
+  background-color: #332600;
+  border-color: #ffcc00;
+  color: #ffe57f;
+}
+
+/* 🟢 Safe Alert */
+.alert-message.safe {
+  background-color: #002915;
+  border-color: #33cc99;
+  color: #aef3d7;
+}
+
+.alert-message {
+  animation: fadeInSlide 0.4s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

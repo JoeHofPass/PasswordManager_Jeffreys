@@ -9,6 +9,7 @@ function closePasswordPopup() {
 
 function logout() {
   localStorage.removeItem("currentUserEmail");
+  window.location.href = "login.html";
 }
 
 function generatePassword() {
@@ -87,15 +88,39 @@ function saveNewPassword() {
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
     <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
-    <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
-      <i class="fas fa-eye"></i>
-    </button>
+    <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
+<div class="password-actions">
+  <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
+    <i class="fas fa-eye"></i>
+  </button>
+  <button class="copy-password" onclick="copyPassword(this)" title="Copy password">
+    <i class="fas fa-copy"></i>
+  </button>
+</div>
   `;
 
   accountList.appendChild(newAccount);
   closePasswordPopup();
   clearInputFields();
+}
+
+function copyPassword(button) {
+  const passwordElement = button
+    .closest(".password-box")
+    .querySelector(".password-field");
+  const password = passwordElement.dataset.realPassword;
+
+  navigator.clipboard
+    .writeText(password)
+    .then(() => {
+      button.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-copy"></i>';
+      }, 1500);
+    })
+    .catch((err) => {
+      console.error("Failed to copy password:", err);
+    });
 }
 
 function clearInputFields() {
@@ -141,12 +166,18 @@ let currentPasswordId = null;
 function promptPin(action, passwordId) {
   currentAction = action;
   currentPasswordId = passwordId;
-  document.getElementById("pin-modal").classList.remove("hidden");
-}
 
-function closePinModal() {
-  document.getElementById("pin-modal").classList.add("hidden");
-  document.getElementById("pin-input").value = "";
+  const cancelButton = document.getElementById("cancel-pin-btn");
+
+  if (action === "unlock") {
+    cancelButton.textContent = "Logout";
+    cancelButton.onclick = logout;
+  } else {
+    cancelButton.textContent = "Cancel";
+    cancelButton.onclick = closePinModal;
+  }
+
+  document.getElementById("pin-modal").classList.remove("hidden");
 }
 
 function confirmDelete(passwordId) {
@@ -155,7 +186,9 @@ function confirmDelete(passwordId) {
 }
 
 function deletePasswordConfirmed() {
-  const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
+  const card = document.querySelector(
+    `.password-box[data-id="${currentPasswordId}"]`
+  );
   if (card) {
     card.remove();
   }
@@ -168,7 +201,9 @@ function closeDeleteModal() {
 
 function openEditWindow(passwordId) {
   document.getElementById("passwordPopup").style.display = "block";
-  document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
+  document
+    .getElementById("passwordPopup")
+    .scrollIntoView({ behavior: "smooth" });
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;
   document.getElementById("generatedPassword").value = "test";
@@ -178,7 +213,7 @@ function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
     promptPin("unlock", null);
-  }, 3 * 60 * 1000);
+  }, 1 * 60 * 1000);
 }
 
 ["click", "mousemove", "keypress"].forEach((evt) =>
@@ -186,3 +221,62 @@ function resetInactivityTimer() {
 );
 
 resetInactivityTimer();
+
+// Called when user clicks the Deleted tab
+function requestPinToAccessDeleted() {
+  currentAction = "access-deleted";
+  document.body.classList.add("locked");
+  document.getElementById("pin-modal").classList.remove("hidden");
+}
+
+// Cancel button behavior: block if it's during a security lock
+function cancelPin() {
+  if (currentAction === "unlock") {
+    alert("You must verify your PIN to continue using GateKeep.");
+    return;
+  }
+  closePinModal();
+}
+
+// Main PIN verification flow
+document.getElementById("verifypinbtn").addEventListener("click", function (e) {
+  e.preventDefault();
+  const pin = document.getElementById("pin-input").value.trim();
+  const currEmail = localStorage.getItem("currentUserEmail");
+  if (!pin || !currEmail) return;
+
+  window.electron.send("verify-pin", { email: currEmail, pin });
+
+  window.electron.once("verify-pin-response", (isValid) => {
+    console.log(
+      "📩 Received PIN verification response:",
+      isValid,
+      typeof isValid
+    );
+
+    if (isValid === true || isValid === "true") {
+      if (currentAction === "access-deleted") {
+        window.location.href = "deletedPasswords.html";
+      } else if (currentAction === "edit") {
+        openEditWindow(currentPasswordId);
+      } else if (currentAction === "unlock") {
+        alert("Session unlocked.");
+      }
+      closePinModal();
+    } else {
+      alert("Incorrect PIN. Access denied.");
+    }
+  });
+});
+
+function closePinModal() {
+  document.getElementById("pin-modal").classList.add("hidden");
+  document.getElementById("pin-input").value = "";
+
+  // Restore button state just in case
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+
+  currentAction = null;
+}
