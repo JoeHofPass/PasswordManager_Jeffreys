@@ -88,10 +88,15 @@ function saveNewPassword() {
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
     <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
-    <button class="toggle-password" onclick="togglePasswordVisibility(this.previousElementSibling, this)">
-      <i class="fas fa-eye"></i>
-    </button>
+    <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
+    <div class="password-actions">
+      <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
+        <i class="fas fa-eye"></i>
+      </button>
+      <button class="copy-password" onclick="copyPassword(this)" title="Copy password">
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
   `;
 
   accountList.appendChild(newAccount);
@@ -161,6 +166,15 @@ let currentPasswordId = null;
 function promptPin(action, passwordId) {
   currentAction = action;
   currentPasswordId = passwordId;
+  const cancelButton = document.getElementById("cancel-pin-btn");
+
+  if (action === "unlock") {
+    cancelButton.textContent = "Logout";
+    cancelButton.onclick = logout;
+  } else {
+    cancelButton.textContent = "Cancel";
+    cancelButton.onclick = closePinModal;
+  }
   document.getElementById("pin-modal").classList.remove("hidden");
 }
 
@@ -198,7 +212,7 @@ function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
     promptPin("unlock", null);
-  }, 3 * 60 * 1000);
+  }, 1 * 60 * 1000);
 }
 
 ["click", "mousemove", "keypress"].forEach((evt) =>

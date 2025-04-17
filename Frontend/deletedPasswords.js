@@ -26,8 +26,8 @@ function submitPIN() {
   }
 
   // ✅ Declare the handler FIRST
-  const handlePinResponse = (isValid) => {
-    if (isValid) {
+  const handlePinResponse = (response) => {
+    if (response.status === "success") {
       document.getElementById("pin-modal").style.display = "none";
       fetchDeletedPasswords(currEmail);
     } else {

@@ -14,7 +14,7 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
   mainWindow.loadFile("login.html");
   mainWindow.webContents.on("did-fail-load", () => {
     console.log("Page loaded: ", mainWindow.webContents.getURL());
@@ -56,7 +56,7 @@ ipcMain.on("verify-pin", (event, { email, pin }) => {
     event.reply("verify-pin-response", response);
   } catch (error) {
     console.error("native module crashed:", error);
-    event.reply("verify-pin-reponse", "error");
+    event.reply("verify-pin-response", "error");
   }
 });
 

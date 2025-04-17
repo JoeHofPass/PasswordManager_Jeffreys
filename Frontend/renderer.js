@@ -50,19 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
             window.electron.send("verify-pin", { email: current, pin });
 
         });
-        window.electron.once("verify-pin-response", (response) => {
+        window.electron.on("verify-pin-response", (response) => {
             if (response.status === "success") {
                 console.log("pin successful!");
                 if (currentAction === "access-deleted") {
                     window.location.href = "deletedPasswords.html";
                   } else if (currentAction === "edit") {
                     openEditWindow(currentPasswordId);
-                  } else if (currentAction === "unlock") {
-                    alert("Session unlocked.");
                   }
                   closePinModal();
-                //closePinModal();
-                //openEditWindow(currentPasswordId);
             } else {
                 console.log("pin failed!");
             }
