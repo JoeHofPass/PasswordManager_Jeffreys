@@ -12,7 +12,7 @@ using namespace std;
 #define DB_CONN "dbname=GateKeep user=teamuser password=IntersteLL@r_@5202 host=database-1.c3yyqymmofip.us-east-2.rds.amazonaws.com port=5432"
 
 // add new password
-int storePassword(const char *username, const char *serviceName, const char *serviceUsername, const char *servicePassword)
+int storePassword(const char *username, const char *serviceName, const char *serviceUsername, const char *servicePassword, const char *password_id)
 {
     PGconn *conn = connPGDB(DB_CONN);
 
@@ -36,10 +36,10 @@ int storePassword(const char *username, const char *serviceName, const char *ser
 
     string userID = PQgetvalue(IDres, 0, 0);
     PQclear(IDres);
-    const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password) VALUES ($1,$2,$3,$4)";
-    const char *creds[] = {userID.c_str(), serviceName, serviceUsername, servicePassword};
+    const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
+    const char *creds[] = {userID.c_str(), serviceName, serviceUsername, servicePassword, password_id};
 
-    PGresult *res = PQexecParams(conn, addPassword, 4, NULL, creds, NULL, NULL, 0);
+    PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, NULL, NULL, 0);
     if (PQresultStatus(res) != PGRES_COMMAND_OK)
     {
         fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
@@ -244,7 +244,7 @@ string getDeletedPasswords(const char *username)
     PQclear(IDres);
     const char *paramValues2[] = {userID};
 
-    const char *callPasswords = "SELECT service_name, service_username, service_password , deleted_at FROM credentials WHERE user_id = $1 and is_deleted = true and deleted_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'";
+    const char *callPasswords = "SELECT service_name, service_username, service_password, password_id, deleted_at FROM credentials WHERE user_id = $1 and is_deleted = true and deleted_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'";
     PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -268,7 +268,9 @@ string getDeletedPasswords(const char *username)
         JSON << "{"
              << "\"service\": \"" << PQgetvalue(res, i, 0) << "\","
              << "\"username\": \"" << PQgetvalue(res, i, 1) << "\","
-             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\""
+             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\","
+             << "\"password_id\": \"" << PQgetvalue(res, i, 3) << "\""
+
              << "}";
         if (i < PQntuples(res) - 1)
             JSON << ",";
@@ -280,7 +282,7 @@ string getDeletedPasswords(const char *username)
     return JSON.str();
 }
 
-int restoreOrDeletePassword(const char *username, const char *serviceName, const char *zeroORone)
+int restoreOrDeletePassword(const char *username, const char *password_id, const char *zeroORone)
 {
     PGconn *conn = connPGDB(DB_CONN);
 
@@ -305,11 +307,11 @@ int restoreOrDeletePassword(const char *username, const char *serviceName, const
 
     const char *userID = PQgetvalue(IDres, 0, 0);
     PQclear(IDres);
-    const char *paramValues2[] = {userID, serviceName};
+    const char *paramValues2[] = {userID, password_id};
 
     if (strcmp(zeroORone, "1") == 0)
     {
-        const char *callPasswords = "UPDATE credentials SET is_deleted = false, deleted_at = null WHERE user_id = $1 and service_name = $2";
+        const char *callPasswords = "UPDATE credentials SET is_deleted = false, deleted_at = null WHERE user_id = $1 and password_id = $2";
         PGresult *res = PQexecParams(conn, callPasswords, 2, NULL, paramValues2, NULL, NULL, 0);
 
         if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -329,7 +331,7 @@ int restoreOrDeletePassword(const char *username, const char *serviceName, const
     }
     else if (strcmp(zeroORone, "0") == 0)
     {
-        const char *toDelete = "UPDATE credentials SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE user_id = $1 and service_name = $2";
+        const char *toDelete = "UPDATE credentials SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE user_id = $1 and password_id = $2";
         PGresult *res = PQexecParams(conn, toDelete, 2, NULL, paramValues2, NULL, NULL, 0);
 
         if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -378,7 +380,7 @@ string getPasswords(const char *username)
     PQclear(IDres);
     const char *paramValues2[] = {userID};
 
-    const char *callPasswords = "SELECT service_name, service_username, service_password FROM credentials WHERE user_id = $1 and is_deleted = false";
+    const char *callPasswords = "SELECT service_name, service_username, service_password, password_id FROM credentials WHERE user_id = $1 and is_deleted = false";
     PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -402,7 +404,10 @@ string getPasswords(const char *username)
         JSON << "{"
              << "\"service\": \"" << PQgetvalue(res, i, 0) << "\","
              << "\"username\": \"" << PQgetvalue(res, i, 1) << "\","
-             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\""
+             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\","
+             << "\"password_id\": \"" << PQgetvalue(res, i, 3) << "\""
+
+
              << "}";
         if (i < PQntuples(res) - 1)
             JSON << ",";

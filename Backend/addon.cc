@@ -11,8 +11,10 @@ Napi::String StorePassword(const Napi::CallbackInfo& credentials){
     Napi::String serviceName = credentials[1].As<Napi::String>();
     Napi::String serviceUsername = credentials[2].As<Napi::String>();
     Napi::String servicePassword = credentials[3].As<Napi::String>();
+    Napi::String password_id = credentials[4].As<Napi::String>();
 
-    if(storePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), serviceUsername.Utf8Value().c_str(), servicePassword.Utf8Value().c_str())){
+
+    if(storePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), serviceUsername.Utf8Value().c_str(), servicePassword.Utf8Value().c_str(), password_id.Utf8Value().c_str())){
         return Napi::String::New(env, "1");
     } else {
         return Napi::String::New(env, "0");
@@ -84,10 +86,10 @@ Napi::String GetDeletedPasswords(const Napi::CallbackInfo& credentials){
 Napi::String RestoreOrDeletePassword(const Napi::CallbackInfo& credentials){
     Napi::Env env = credentials.Env();
     Napi::String username = credentials[0].As<Napi::String>();
-    Napi::String serviceName = credentials[1].As<Napi::String>();
+    Napi::String password_id = credentials[1].As<Napi::String>();
     Napi::String restoreOrdelete = credentials[2].As<Napi::String>();
 
-    if(restoreOrDeletePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), restoreOrdelete.Utf8Value().c_str())){
+    if(restoreOrDeletePassword(username.Utf8Value().c_str(), password_id.Utf8Value().c_str(), restoreOrdelete.Utf8Value().c_str())){
         return Napi::String::New(env, "1");
     } else {
         return Napi::String::New(env, "0");

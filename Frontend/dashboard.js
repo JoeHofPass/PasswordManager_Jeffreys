@@ -72,8 +72,10 @@ function saveNewPassword() {
     domain += ".com";
   }
   const logoURL = `https://logo.clearbit.com/${domain}`;
-  const id = Date.now(); // simple unique ID
-
+  //const id = Date.now().toString(36) + Math.floor(Math.random() * 1000).toString();
+  const id = crypto.randomUUID();
+  //console.log("Generated ID:", id);
+  localStorage.setItem("currentPasswordId", id);
   const accountList = document.getElementById("accountList");
   const newAccount = document.createElement("div");
   newAccount.setAttribute("data-id", id);
@@ -88,7 +90,7 @@ function saveNewPassword() {
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
     <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
+    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
     <div class="password-actions">
       <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
         <i class="fas fa-eye"></i>
@@ -124,18 +126,19 @@ function copyPassword(button) {
 }
 
 function clearInputFields() {
+  console.log("Clearing input fields");
   if (
     document.getElementById("siteName") &&
     document.getElementById("userEmail") &&
-    document.getElementById("generatedPassword") &&
-    document.getElementById("strengthBar") &&
-    document.getElementById("strengthText")
+    document.getElementById("generatedPassword") 
+    //document.getElementById("strengthBar") &&
+    //document.getElementById("strengthText")
   ) {
     document.getElementById("siteName").value = "";
     document.getElementById("userEmail").value = "";
     document.getElementById("generatedPassword").value = "";
-    document.getElementById("strengthBar").value = 0;
-    document.getElementById("strengthText").innerText = "";
+    //document.getElementById("strengthBar").value = 0;
+    //document.getElementById("strengthText").innerText = "";
   }
 }
 
@@ -161,11 +164,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 let inactivityTimer;
 let currentAction = null;
-let currentPasswordId = null;
+//let currentPasswordId = null;
 
-function promptPin(action, passwordId) {
+function promptPin(action, id) {
   currentAction = action;
-  currentPasswordId = passwordId;
+  currentPasswordId(id);
   const cancelButton = document.getElementById("cancel-pin-btn");
 
   if (action === "unlock") {
@@ -182,30 +185,37 @@ function closePinModal() {
   document.getElementById("pin-modal").classList.add("hidden");
   document.getElementById("pin-input").value = "";
 }
+function currentPasswordId(id) {
+  localStorage.setItem("currentPasswordId", id);
+}
 
-function confirmDelete(passwordId) {
-  currentPasswordId = passwordId;
+function confirmDelete(id) {
+  //console.log("setting currID to ", id);
+  currentPasswordId(id);
   document.getElementById("delete-confirmation").classList.remove("hidden");
 }
 
 function deletePasswordConfirmed() {
-  const card = document.querySelector(`.password-box[data-id="${currentPasswordId}"]`);
+  const id = localStorage.getItem("currentPasswordId");
+  //console.log("Deleting password with ID:", id);
+  const card = document.querySelector(`.password-box[data-id="${id}"]`);
   if (card) {
     card.remove();
   }
   closeDeleteModal();
+  localStorage.removeItem("currentPasswordId");
 }
 
 function closeDeleteModal() {
   document.getElementById("delete-confirmation").classList.add("hidden");
 }
 
-function openEditWindow(passwordId) {
+function openEditWindow(id) {
   document.getElementById("passwordPopup").style.display = "block";
   document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;
-  document.getElementById("generatedPassword").value = "test";
+  document.getElementById("generatedPassword").value = "";
 }
 
 function resetInactivityTimer() {

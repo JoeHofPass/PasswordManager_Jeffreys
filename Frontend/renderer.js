@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("loading-overlay").classList.remove("hidden");
             window.electron.send("login", { email, password });
         });
-        window.electron.once("login-response", (response) => {
+        window.electron.removeAllListeners("login-response");
+        window.electron.on("login-response", (response) => {
             document.getElementById("loading-overlay").classList.add("hidden");
             if (response.status === "success") {
                 console.log("Login successful!");
@@ -50,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.electron.send("verify-pin", { email: current, pin });
 
         });
+        window.electron.removeAllListeners("verify-pin-response");
         window.electron.on("verify-pin-response", (response) => {
             if (response.status === "success") {
                 console.log("pin successful!");
@@ -87,8 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
             window.electron.send("register", { fullname, email, password, pin });
             document.getElementById("loading-overlay").classList.remove("hidden");
         });
-
-        window.electron.once("register-response", (response) => {
+        window.electron.removeAllListeners("register-response");
+        window.electron.on("register-response", (response) => {
             document.getElementById("loading-overlay").classList.add("hidden");
             if (response === "success") {
                 alert("Registration successful!");
@@ -100,15 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (passwordPopup) {
-        document
-            .getElementById("savepassbtn")
-            .addEventListener("click", (event) => {
+        document.getElementById("savepassbtn").addEventListener("click", (event) => {
                 event.preventDefault();
                 const email = localStorage.getItem("currentUserEmail");
                 const serviceName = document.getElementById("siteName").value;
                 const serviceUsername = document.getElementById("userEmail").value;
-                const servicePassword =
-                    document.getElementById("generatedPassword").value;
+                const servicePassword = document.getElementById("generatedPassword").value;
+                const password_id = localStorage.getItem("currentPasswordId");
+                //console.log("Password ID:", password_id);
 
                 if (!window.electron) {
                     console.error("Electron API not found!");
@@ -119,9 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     serviceName,
                     serviceUsername,
                     servicePassword,
+                    password_id
                 });
             });
-        window.electron.once("storePassword-response", (response) => {
+        window.electron.removeAllListeners("storePassword-response");
+        window.electron.on("storePassword-response", (response) => {
             if (response === "success") {
                 console.log("Password successfully stored!");
                 closePasswordPopup();
@@ -131,28 +134,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     if (deletePassword) {
-        document
-            .getElementById("deletepassbtn")
-            .addEventListener("click", (event) => {
+        document.getElementById("deletepassbtn").addEventListener("click", (event) => {
                 event.preventDefault();
                 const email = localStorage.getItem("currentUserEmail");
+                const password_id = localStorage.getItem("currentPasswordId");
                 const zeroORone = "0";
-                const card = document.querySelector(
-                    `.password-box[data-id="${currentPasswordId}"]`
-                );
-                const serviceName = card?.querySelector("h4")?.innerText;
+                
                 if (!window.electron) {
                     console.error("Electron API not found!");
                     return;
                 }
                 window.electron.send("restoreORdelete", {
                     email,
-                    serviceName,
-                    zeroORone,
+                    password_id,
+                    zeroORone
                 });
                 //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
             });
-        window.electron.once("restoreORdelete-response", (response) => {
+        window.electron.removeAllListeners("restoreORdelete-response");
+        window.electron.on("restoreORdelete-response", (response) => {
             //console.log("restoreORdelete-response:", response);
 
             if (response === "success") {
@@ -167,23 +167,22 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("confirmBtn").addEventListener("click", (event) => {
             event.preventDefault();
             const email = localStorage.getItem("currentUserEmail");
+            const password_id = localStorage.getItem("currentPasswordId");
             const zeroORone = "1";
-            const card = document.querySelector(
-                `.password-box[data-id="${currentPasswordId}"]`
-            );
-            const serviceName = card?.querySelector("h4")?.innerText;
+
             if (!window.electron) {
                 console.error("Electron API not found!");
                 return;
             }
             window.electron.send("restoreORdelete", {
                 email,
-                serviceName,
-                zeroORone,
+                password_id,
+                zeroORone
             });
             //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
         });
-        window.electron.once("restoreORdelete-response", (response) => {
+        window.electron.removeAllListeners("restoreORdelete-response");
+        window.electron.on("restoreORdelete-response", (response) => {
             //console.log("restoreORdelete-response:", response);
             if (response === "success") {
                 recoverPassword();
@@ -196,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (accounts) {
         const current = localStorage.getItem("currentUserEmail");
         window.electron.send("get-passwords", { email: current });
-
+        window.electron.removeAllListeners("get-passwords-response");
         window.electron.on("get-passwords-response", (passwords) => {
             //console.log("Listening for get-password-response");
             const accountList = document.getElementById("accountList");
@@ -207,7 +206,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     domain += ".com";
                 }
                 const logoURL = `https://logo.clearbit.com/${domain}`;
-                const id = Date.now(); // simple unique ID
+                const id = password.password_id;
+                localStorage.setItem("service", password.service);
+                localStorage.setItem("username", password.username);
 
                 const newAccount = document.createElement("div");
                 newAccount.classList.add("password-box");

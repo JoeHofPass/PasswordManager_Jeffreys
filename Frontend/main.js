@@ -14,7 +14,7 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   mainWindow.loadFile("login.html");
   mainWindow.webContents.on("did-fail-load", () => {
     console.log("Page loaded: ", mainWindow.webContents.getURL());
@@ -62,13 +62,14 @@ ipcMain.on("verify-pin", (event, { email, pin }) => {
 
 ipcMain.on(
   "store-password",
-  (event, { email, serviceName, serviceUsername, servicePassword }) => {
+  (event, { email, serviceName, serviceUsername, servicePassword, password_id }) => {
     try {
       const result = addon.storePassword(
         email,
         serviceName,
         serviceUsername,
-        servicePassword
+        servicePassword,
+        password_id
       );
       event.reply(
         "storePassword-response",
@@ -95,9 +96,9 @@ ipcMain.on("get-passwords", (event, { email }) => {
   }
 });
 
-ipcMain.on("restoreORdelete", (event, { email, serviceName, zeroORone }) => {
+ipcMain.on("restoreORdelete", (event, { email, password_id, zeroORone }) => {
   try {
-    const result = addon.restoreOrDeletePassword(email, serviceName, zeroORone);
+    const result = addon.restoreOrDeletePassword(email, password_id, zeroORone);
     event.reply(
       "restoreORdelete-response",
       result === "1" ? "success" : "fail"

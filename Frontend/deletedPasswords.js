@@ -2,10 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   openPINModal();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  openPINModal();
-});
-
 function openPINModal() {
   document.getElementById("pin-modal").style.display = "flex";
   document.getElementById("pin-error").classList.add("hidden");
@@ -38,8 +34,8 @@ function submitPIN() {
   };
 
   // ✅ Now safe to remove and attach listener
-  window.electron.removeListener("verify-pin-response", handlePinResponse);
-  window.electron.once("verify-pin-response", handlePinResponse);
+  window.electron.removeAllListeners("verify-pin-response", handlePinResponse);
+  window.electron.on("verify-pin-response", handlePinResponse);
 
   // ✅ Send IPC
   window.electron.send("verify-pin", { email: currEmail, pin });
@@ -56,7 +52,7 @@ function fetchDeletedPasswords(email) {
       if (!domain.includes(".")) {
         domain += ".com";
       }
-      const id = Date.now();
+      const id = password.password_id;
       const logoURL = `https://logo.clearbit.com/${domain}`;
 
       const accountCard = document.createElement("div");
@@ -84,20 +80,18 @@ function fetchDeletedPasswords(email) {
   });
 }
 
-// Existing helper functions remain unchanged
+//let currentPasswordId = null;
 function promptRecovery(passwordId) {
-  currentPasswordId = passwordId;
+  localStorage.setItem("currentPasswordId", passwordId);
   document.getElementById("restore-confirmation").classList.remove("hidden");
 }
 
 function recoverPassword() {
-  const card = document.querySelector(
-    `.password-box[data-id="${currentPasswordId}"]`
-  );
-  if (card) {
-    card.remove();
-  }
+  const id = localStorage.getItem("currentPasswordId");
+  const card = document.querySelector(`.password-box[data-id="${id}"]`);
+  if (card) {card.remove();}
   closeModal();
+  localStorage.removeItem("currentPasswordId");
 }
 
 function closeModal() {
