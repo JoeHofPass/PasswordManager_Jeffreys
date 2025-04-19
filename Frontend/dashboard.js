@@ -103,7 +103,7 @@ function saveNewPassword() {
 
   accountList.appendChild(newAccount);
   closePasswordPopup();
-  clearInputFields();
+  //clearInputFields();
 }
 
 function copyPassword(button) {
@@ -130,7 +130,7 @@ function clearInputFields() {
   if (
     document.getElementById("siteName") &&
     document.getElementById("userEmail") &&
-    document.getElementById("generatedPassword") 
+    document.getElementById("generatedPassword")
     //document.getElementById("strengthBar") &&
     //document.getElementById("strengthText")
   ) {

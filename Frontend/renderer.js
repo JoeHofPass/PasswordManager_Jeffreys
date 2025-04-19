@@ -109,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const serviceUsername = document.getElementById("userEmail").value;
                 const servicePassword = document.getElementById("generatedPassword").value;
                 const password_id = localStorage.getItem("currentPasswordId");
-                //console.log("Password ID:", password_id);
 
                 if (!window.electron) {
                     console.error("Electron API not found!");

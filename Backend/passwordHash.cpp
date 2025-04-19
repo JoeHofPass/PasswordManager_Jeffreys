@@ -131,7 +131,7 @@ string getFullname(const char *username)
         printf("Name not found\n");
         PQclear(res);
         PQfinish(conn);
-        return 0;
+        return "0";
     }
     string fullname = PQgetvalue(res, 0, 0);
 
