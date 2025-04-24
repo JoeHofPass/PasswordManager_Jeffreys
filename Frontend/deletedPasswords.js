@@ -3,12 +3,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function openPINModal() {
-  document.getElementById("pin-modal").style.display = "flex";
-  document.getElementById("pin-error").classList.add("hidden");
+  const modal = document.getElementById("pin-modal");
+  const errorMsg = document.getElementById("pin-error");
+
+  if (modal) modal.classList.remove("hidden");
+  if (errorMsg) errorMsg.classList.add("hidden");
 }
 
 function cancelPIN() {
-  window.location.href = "home.html";
+  document.getElementById("pin-modal").classList.add("hidden");
+  document.getElementById("pin-input").value = "";
+  document.getElementById("pin-error").classList.add("hidden");
 }
 
 function submitPIN() {
@@ -89,7 +94,9 @@ function promptRecovery(passwordId) {
 function recoverPassword() {
   const id = localStorage.getItem("currentPasswordId");
   const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (card) {card.remove();}
+  if (card) {
+    card.remove();
+  }
   closeModal();
   localStorage.removeItem("currentPasswordId");
 }

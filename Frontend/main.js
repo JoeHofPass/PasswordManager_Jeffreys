@@ -62,7 +62,10 @@ ipcMain.on("verify-pin", (event, { email, pin }) => {
 
 ipcMain.on(
   "store-password",
-  (event, { email, serviceName, serviceUsername, servicePassword, password_id }) => {
+  (
+    event,
+    { email, serviceName, serviceUsername, servicePassword, password_id }
+  ) => {
     try {
       const result = addon.storePassword(
         email,

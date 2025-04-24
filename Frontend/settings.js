@@ -7,10 +7,9 @@ function checkAccountStatus() {
 
   const getUsername = localStorage.getItem("currentUsername");
   const getEmail = localStorage.getItem("currentUserEmail");
-  if(getUsername) username.textContent = getUsername;
-  if(getEmail) email.textContent = getEmail;
+  if (getUsername) username.textContent = getUsername;
+  if (getEmail) email.textContent = getEmail;
 
-  // Simulating account status (Replace with actual backend API call)
   const isActive = true; // Set to false for inactive status
 
   if (!isActive) {
