@@ -5,7 +5,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: "Share Tech Mono", monospace;
+  font-family: "Orbitron", sans-serif;
   background: radial-gradient(ellipse at bottom, #080c10 0%, #000000 100%);
   color: #00ffe1;
   width: 100%;
