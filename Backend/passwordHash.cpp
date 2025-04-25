@@ -418,24 +418,3 @@ string getPasswords(const char *username)
     PQfinish(conn);
     return JSON.str();
 }
-
-// void permanentalyDeletePassword(){
-//     PGconn *conn = connPGDB(DB_CONN);
-
-//     const char *toDelete = "DELETE from credentials WHERE is_deleted = true and deleted_at < CURRENT_TIMESTAMP - INTERVAL '30 days'";
-//     printf("Query: %s\n", toDelete);
-//     PGresult *res = PQexecParams(conn, toDelete, 0, NULL, NULL, NULL, NULL, 0);
-
-//     if(PQresultStatus(res) != PGRES_COMMAND_OK){
-//         fprintf(stderr, "failed to delete old passwords %s\n", PQerrorMessage(conn));
-//     } else {
-//         printf("old passwords deleted");
-//     }
-//     PQclear(res);
-//     PQfinish(conn);
-// }
-
-// int main() {
-//     permanentalyDeletePassword();
-//     return 0;
-// }

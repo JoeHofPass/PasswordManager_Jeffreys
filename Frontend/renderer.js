@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileBtn = document.getElementById("selectFile");
   const fileInput = document.getElementById("fileInput");
   const pinStatus = document.getElementById("pin-status");
+  const openLink = document.querySelector(".external-link");
 
   const restoreBtn = document.getElementById("confirmBtn");
   if (restoreBtn) {
@@ -36,33 +37,35 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("currentPasswordId");
   };
 
-  // ✅ External link support
-  document.body.addEventListener("click", (e) => {
-    const anchor = e.target.closest("a.external-link");
-    if (anchor) {
-      e.preventDefault();
-      const targetUrl = anchor.getAttribute("data-href");
-
-      if (
-        window.electron &&
-        typeof window.electron.openExternal === "function"
-      ) {
-        try {
-          window.electron.openExternal(targetUrl);
-        } catch (err) {
-          console.error("openExternal failed:", err);
+  //External link support
+  if (openLink) {
+    document.body.addEventListener("click", (e) => {
+      const anchor = e.target.closest("a.external-link");
+      if (anchor) {
+        e.preventDefault();
+        const targetUrl = anchor.getAttribute("data-href");
+  
+        if (
+          window.electron &&
+          typeof window.electron.openExternal === "function"
+        ) {
+          try {
+            window.electron.openExternal(targetUrl);
+          } catch (err) {
+            console.error("openExternal failed:", err);
+            window.open(targetUrl, "_blank");
+          }
+        } else {
+          console.warn(
+            "Electron external shell not available. Opening in new tab."
+          );
           window.open(targetUrl, "_blank");
         }
-      } else {
-        console.warn(
-          "Electron external shell not available. Opening in new tab."
-        );
-        window.open(targetUrl, "_blank");
       }
-    }
-  });
-
-  // ✅ Login
+    });
+  }
+  
+  //Login
   if (loginForm) {
     loginForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -88,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ PIN verification
+  //PIN verification
   if (pinForm) {
     pinForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -172,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ Save password
+  // Save password
   if (passwordPopup) {
     document
       .getElementById("savepassbtn")
@@ -181,8 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = localStorage.getItem("currentUserEmail");
         const serviceName = document.getElementById("siteName").value;
         const serviceUsername = document.getElementById("userEmail").value;
-        const servicePassword =
-          document.getElementById("generatedPassword").value;
+        const servicePassword = document.getElementById("generatedPassword").value;
         const password_id = localStorage.getItem("currentPasswordId");
 
         window.electron.send("store-password", {
@@ -253,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ Render passwords
+  //Render passwords
   if (accounts) {
     const email = localStorage.getItem("currentUserEmail");
     window.electron.send("get-passwords", { email });
@@ -300,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(newAccount);
   }
 });
+
 // Make recoverPassword and closeModal globally accessible
 window.electron.removeAllListeners("restoreORdelete-response");
 window.electron.on("restoreORdelete-response", (response) => {
