@@ -3,7 +3,7 @@
     {
       'target_name': "addon",
       "sources": [
-        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp" #"backend/main.cpp"
+        "backend/addon.cc", "backend/DBconnection.cpp", "backend/passwordHash.cpp"
       ],
       "cflags": ["-std=c++17"],
       "ldflags": ["-stdlib=libc++"],

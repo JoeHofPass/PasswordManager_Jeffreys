@@ -13,7 +13,6 @@ string getPasswords(const char *username);
 string getDeletedPasswords(const char *username);
 int restoreOrDeletePassword(const char *username, const char *password_id, const char *zeroORone);
 
-//void permanentalyDeletePassword();
 
 
 #endif
