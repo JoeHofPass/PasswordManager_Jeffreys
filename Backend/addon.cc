@@ -11,7 +11,10 @@ Napi::String StorePassword(const Napi::CallbackInfo& credentials){
     Napi::String serviceName = credentials[1].As<Napi::String>();
     Napi::String serviceUsername = credentials[2].As<Napi::String>();
     Napi::String servicePassword = credentials[3].As<Napi::String>();
+    //Napi::Buffer<unsigned char> servicePassword = credentials[3].As<Napi::Buffer<unsigned char>>();
     Napi::String password_id = credentials[4].As<Napi::String>();
+
+    //vector<unsigned char> servicePasswordVec(servicePassword.Data(), servicePassword.Data() + servicePassword.Length());
 
 
     if(storePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), serviceUsername.Utf8Value().c_str(), servicePassword.Utf8Value().c_str(), password_id.Utf8Value().c_str())){
