@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h4>${password.service}</h4>
                     <p>${password.username}</p>
                         <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-                        <p class="password-field" data-real-password="${password.password}" data-visible="false">••••••••••••</p>
+                        <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
                     <div class="password-actions">
                         <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
                             <i class="fas fa-eye"></i>
@@ -232,6 +232,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         </button>
                     </div>
                     `;
+                    const passwordField = newAccount.querySelector(".password-field");
+                    passwordField.dataset.realPassword = password.password;
                 accountList.appendChild(newAccount);
             });
         });

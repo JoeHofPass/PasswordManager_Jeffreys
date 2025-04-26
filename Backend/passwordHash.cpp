@@ -6,10 +6,67 @@
 #include <sodium.h>
 #include "DBconnection.h"
 #include "passwordHash.h"
+#include "json.hpp"
 using namespace std;
+using json = nlohmann::json;
 
 //#define DB_CONN "dbname=GateKeep user=postgres password=IntersteLL@r_@5201 host=localhost port=5433"
 #define DB_CONN "dbname=GateKeep user=teamuser password=IntersteLL@r_@5202 host=database-1.c3yyqymmofip.us-east-2.rds.amazonaws.com port=5432"
+
+#define SALT_BYTES crypto_pwhash_SALTBYTES
+#define KEY_BYTES crypto_aead_aegis256_KEYBYTES
+#define NONCE_BYTES crypto_aead_aegis256_NPUBBYTES
+#define MAC_BYTES crypto_aead_aegis256_ABYTES
+
+unsigned char userKey[KEY_BYTES];
+
+
+int keyFromPassword(const char *password, const unsigned char *salt, unsigned char *key_out)
+{
+    return crypto_pwhash(key_out, KEY_BYTES, password, strlen(password), salt, crypto_pwhash_OPSLIMIT_SENSITIVE,
+    crypto_pwhash_MEMLIMIT_SENSITIVE, crypto_pwhash_ALG_DEFAULT);
+}
+
+int encrypt(const unsigned char *plaintext, size_t plaintextLen, unsigned char *ciphertext_withNonce)
+{
+    unsigned char nonce[NONCE_BYTES];
+    randombytes_buf(nonce, sizeof(nonce));
+    //size_t ciphertextLen = plaintextLen + crypto_aead_aegis256_ABYTES;
+    unsigned char *ciphertext = ciphertext_withNonce + NONCE_BYTES;
+    memcpy(ciphertext_withNonce, nonce, NONCE_BYTES);
+
+
+    int result = crypto_aead_aegis256_encrypt(ciphertext, NULL, plaintext, plaintextLen, NULL, 0, NULL, nonce, userKey);
+    if (result != 0)
+    {
+        fprintf(stderr, "Encryption failed with error %d\n", result);
+        return -1;
+    } else {
+        printf("Encryption successful\n");
+    }
+
+    return 1;
+}
+
+int decrypt(const unsigned char *ciphertext_withNonce, size_t ciphertextLen_withNonce, unsigned char *plaintext, size_t *plaintextLen)
+{
+    unsigned char nonce[NONCE_BYTES];
+    const unsigned char *ciphertext = ciphertext_withNonce + NONCE_BYTES;
+    memcpy(nonce, ciphertext_withNonce, NONCE_BYTES);
+    size_t ciphertextLen = ciphertextLen_withNonce - NONCE_BYTES;
+
+    unsigned long long actualDecryptedLen = 0;
+    int result = crypto_aead_aegis256_decrypt(plaintext, &actualDecryptedLen, NULL, ciphertext, ciphertextLen, NULL, 0, nonce, userKey);
+    if (result != 0)
+    {
+        fprintf(stderr, "Decryption failed with error %d\n", result);
+        return -1;
+    } else {
+        printf("Decryption successful\n");
+    }
+    *plaintextLen = (size_t)(actualDecryptedLen);
+    return 1;
+}
 
 // add new password
 int storePassword(const char *username, const char *serviceName, const char *serviceUsername, const char *servicePassword, const char *password_id)
@@ -36,14 +93,31 @@ int storePassword(const char *username, const char *serviceName, const char *ser
 
     string userID = PQgetvalue(IDres, 0, 0);
     PQclear(IDres);
+    size_t servicePasswordLen = strlen(servicePassword);
+    size_t ciphertextLenTotal = servicePasswordLen + NONCE_BYTES + crypto_aead_aegis256_ABYTES;
+    unsigned char *ciphertext_withNonce = (unsigned char *)malloc(ciphertextLenTotal);
+    if (ciphertext_withNonce == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+    if (encrypt((const unsigned char *)servicePassword, servicePasswordLen, ciphertext_withNonce) != 1)
+    {
+        fprintf(stderr, "Encryption failed\n");
+        free(ciphertext_withNonce);
+        return 0;
+    }
     const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
-    const char *creds[] = {userID.c_str(), serviceName, serviceUsername, servicePassword, password_id};
+    const char *creds[] = {userID.c_str(), serviceName, serviceUsername, (const char *)ciphertext_withNonce, password_id};
+    int paramLengths[] = {0, 0, 0, static_cast<int>(ciphertextLenTotal), 0};
+    int paramFormats[] = {0, 0, 0, 1, 0};
 
-    PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, NULL, NULL, 0);
+    PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, paramLengths, paramFormats, 0);
     if (PQresultStatus(res) != PGRES_COMMAND_OK)
     {
         fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
         PQclear(res);
+        free(ciphertext_withNonce);
         PQfinish(conn);
         return 0;
     }
@@ -52,6 +126,7 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         printf("Password stored successfully for %s\n", username);
     }
     PQclear(res);
+    free(ciphertext_withNonce);
     PQfinish(conn);
     return 1;
 }
@@ -92,9 +167,14 @@ int newUser(const char *fullname, const char *username, const char *password, co
 
     char hashed_password[crypto_pwhash_STRBYTES];
     hashPassword(password, hashed_password);
-    const char *credentials[] = {fullname, username, hashed_password, pin};
+    unsigned char salt[SALT_BYTES];
+    randombytes_buf(salt, sizeof(salt));
 
-    PGresult *res = PQexecParams(conn, " INSERT INTO users (fullname, username, password, pin) VALUES ($1, $2, $3, $4)", 4, NULL, credentials, NULL, NULL, 0);
+    const char *credentials[] = {fullname, username, hashed_password, pin, (const char *)(salt)};
+    int paramLengths[] = {0, 0, 0, 0, static_cast<int>(sizeof(salt))};
+    int paramFormats[] = {0, 0, 0, 0, 1};
+
+    PGresult *res = PQexecParams(conn, " INSERT INTO users (fullname, username, password, pin, salt) VALUES ($1, $2, $3, $4, $5)", 5, NULL, credentials, paramLengths, paramFormats, 0);
     if (PQresultStatus(res) != PGRES_COMMAND_OK)
     {
         fprintf(stderr, "failed to insert %s\n", PQerrorMessage(conn));
@@ -145,7 +225,7 @@ int verifyUser(const char *username, const char *password)
 {
     PGconn *conn = connPGDB(DB_CONN);
 
-    const char *getCredentials = "SELECT password FROM users WHERE username = $1";
+    const char *getCredentials = "SELECT password, salt FROM users WHERE username = $1";
     PGresult *res = PQexecParams(conn, getCredentials, 1, NULL, &username, NULL, NULL, 0);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
@@ -164,9 +244,20 @@ int verifyUser(const char *username, const char *password)
     }
 
     const char *storedHash = PQgetvalue(res, 0, 0);
+    unsigned char salt[SALT_BYTES];
+    int saltLength = PQgetlength(res, 0, 1);
+    if (saltLength > static_cast<int>(SALT_BYTES)) saltLength = static_cast<int>(SALT_BYTES);
+    memcpy(salt, PQgetvalue(res, 0, 1), saltLength);
     if (crypto_pwhash_str_verify(storedHash, password, strlen(password)) != 0)
     {
         printf("Incorrect Password\n");
+        PQclear(res);
+        PQfinish(conn);
+        return 0;
+    }
+    if(keyFromPassword(password, salt, userKey) != 0)
+    {
+        fprintf(stderr, "failed to generate key from password\n");
         PQclear(res);
         PQfinish(conn);
         return 0;
@@ -176,6 +267,13 @@ int verifyUser(const char *username, const char *password)
     PQclear(res);
     PQfinish(conn);
     return 1;
+}
+
+string logoutUser()
+{
+    sodium_memzero(userKey, sizeof(userKey));
+    printf("user logged out\n");
+    return "1";
 }
 
 // pin auth
@@ -243,9 +341,8 @@ string getDeletedPasswords(const char *username)
     const char *userID = PQgetvalue(IDres, 0, 0);
     PQclear(IDres);
     const char *paramValues2[] = {userID};
-
     const char *callPasswords = "SELECT service_name, service_username, service_password, password_id, deleted_at FROM credentials WHERE user_id = $1 and is_deleted = true and deleted_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'";
-    PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
+    PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 1);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
     {
@@ -261,25 +358,44 @@ string getDeletedPasswords(const char *username)
         PQfinish(conn);
         return "[]";
     }
-    ostringstream JSON;
-    JSON << "[";
-    for (int i = 0; i < PQntuples(res); i++)
-    {
-        JSON << "{"
-             << "\"service\": \"" << PQgetvalue(res, i, 0) << "\","
-             << "\"username\": \"" << PQgetvalue(res, i, 1) << "\","
-             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\","
-             << "\"password_id\": \"" << PQgetvalue(res, i, 3) << "\""
 
-             << "}";
-        if (i < PQntuples(res) - 1)
-            JSON << ",";
-    }
-    JSON << "]";
+     json allPasswords = json::array();
+     for (int i = 0; i < PQntuples(res); i++)
+     {
+         const unsigned char *ciphertext_withNonce = (const unsigned char *)PQgetvalue(res, i, 2);
+         int ciphertext_withNonceLen = PQgetlength(res, i, 2);
+         unsigned char *decryptedPassword = (unsigned char *)malloc(ciphertext_withNonceLen);
+         size_t decryptedPasswordLen = 0;
+         if (decryptedPassword == NULL)
+         {
+             fprintf(stderr, "Memory allocation failed\n");
+             PQclear(res);
+             PQfinish(conn);
+             return "[]";
+         }
+         if (decrypt(ciphertext_withNonce, ciphertext_withNonceLen, decryptedPassword, &decryptedPasswordLen) != 1)
+         {
+             fprintf(stderr, "Decryption failed\n");
+             free(decryptedPassword);
+             PQclear(res);
+             PQfinish(conn);
+             return "[]";
+         }
 
-    PQclear(res);
-    PQfinish(conn);
-    return JSON.str();
+         json passwordData ={
+             {"service", PQgetvalue(res, i, 0)},
+             {"username", PQgetvalue(res, i, 1)},
+             {"password", string((char*)decryptedPassword, decryptedPasswordLen)},
+             {"password_id", PQgetvalue(res, i, 3)}
+         };
+         allPasswords.push_back(passwordData);
+         sodium_memzero(decryptedPassword, decryptedPasswordLen);
+         free(decryptedPassword);
+     }
+ 
+     PQclear(res);
+     PQfinish(conn);
+     return allPasswords.dump();
 }
 
 int restoreOrDeletePassword(const char *username, const char *password_id, const char *zeroORone)
@@ -379,9 +495,8 @@ string getPasswords(const char *username)
     const char *userID = PQgetvalue(IDres, 0, 0);
     PQclear(IDres);
     const char *paramValues2[] = {userID};
-
     const char *callPasswords = "SELECT service_name, service_username, service_password, password_id FROM credentials WHERE user_id = $1 and is_deleted = false";
-    PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 0);
+    PGresult *res = PQexecParams(conn, callPasswords, 1, NULL, paramValues2, NULL, NULL, 1);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
     {
@@ -397,24 +512,43 @@ string getPasswords(const char *username)
         PQfinish(conn);
         return "[]";
     }
-    ostringstream JSON;
-    JSON << "[";
+
+    json allPasswords = json::array();
     for (int i = 0; i < PQntuples(res); i++)
     {
-        JSON << "{"
-             << "\"service\": \"" << PQgetvalue(res, i, 0) << "\","
-             << "\"username\": \"" << PQgetvalue(res, i, 1) << "\","
-             << "\"password\": \"" << PQgetvalue(res, i, 2) << "\","
-             << "\"password_id\": \"" << PQgetvalue(res, i, 3) << "\""
+        const unsigned char *ciphertext_withNonce = (const unsigned char *)PQgetvalue(res, i, 2);
+        int ciphertext_withNonceLen = PQgetlength(res, i, 2);
+        unsigned char *decryptedPassword = (unsigned char *)malloc(ciphertext_withNonceLen);
+        size_t decryptedPasswordLen = 0;
+        if (decryptedPassword == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            PQclear(res);
+            PQfinish(conn);
+            return "[]";
+        }
+        if (decrypt(ciphertext_withNonce, ciphertext_withNonceLen, decryptedPassword, &decryptedPasswordLen) != 1)
+        {
+            fprintf(stderr, "Decryption failed\n");
+            free(decryptedPassword);
+            PQclear(res);
+            PQfinish(conn);
+            return "[]";
+        }
+        printf("Decrypted password: '%.*s' (len=%zu)\n", (int)decryptedPasswordLen, decryptedPassword, decryptedPasswordLen);
 
-
-             << "}";
-        if (i < PQntuples(res) - 1)
-            JSON << ",";
+        json passwordData ={
+            {"service", PQgetvalue(res, i, 0)},
+            {"username", PQgetvalue(res, i, 1)},
+            {"password", string((char*)decryptedPassword, decryptedPasswordLen)},
+            {"password_id", PQgetvalue(res, i, 3)}
+        };
+        allPasswords.push_back(passwordData);
+        sodium_memzero(decryptedPassword, decryptedPasswordLen);
+        free(decryptedPassword);
     }
-    JSON << "]";
 
     PQclear(res);
     PQfinish(conn);
-    return JSON.str();
+    return allPasswords.dump();
 }

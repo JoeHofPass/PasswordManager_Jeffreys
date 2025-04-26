@@ -7,11 +7,6 @@ function closePasswordPopup() {
   document.getElementById("passwordPopup").style.display = "none";
 }
 
-function logout() {
-  localStorage.removeItem("currentUserEmail");
-  window.location.href = "login.html";
-}
-
 function generatePassword() {
   const length = 16;
   const chars =
@@ -90,7 +85,7 @@ function saveNewPassword() {
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
     <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+    <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
     <div class="password-actions">
       <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
         <i class="fas fa-eye"></i>
@@ -100,6 +95,8 @@ function saveNewPassword() {
       </button>
     </div>
   `;
+  const passwordField = newAccount.querySelector(".password-field");
+  passwordField.dataset.realPassword = password;
 
   accountList.appendChild(newAccount);
   closePasswordPopup();

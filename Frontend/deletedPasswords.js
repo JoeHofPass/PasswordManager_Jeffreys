@@ -66,11 +66,13 @@ function fetchDeletedPasswords(email) {
           <h4>${password.service}</h4>
           <p>${password.username}</p>
           <div class="password-container">
-            <input type="password" value="${password.password}" class="password-field" readonly />
+            <input type="password" class="password-field" readonly />
             <button class="toggle-password" onclick="togglePassword(this)">👁</button>
             <i class="fa-solid fa-trash-arrow-up restore-icon" title="Recover password" onclick="promptRecovery('${id}')"></i>
           </div>
         </div>`;
+      const passwordField = accountCard.querySelector(".password-field");
+      passwordField.value = password.password;
       deletedList.appendChild(accountCard);
     });
 

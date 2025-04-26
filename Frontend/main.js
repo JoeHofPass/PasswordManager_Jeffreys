@@ -46,6 +46,15 @@ ipcMain.on("register", (event, { fullname, email, password, pin }) => {
   }
 });
 
+ipcMain.on("logout", (event) => {
+  try {
+    const result = addon.logoutUser();
+    event.reply("logout-response", result === "1" ? "success" : "fail");
+  } catch (error) {
+    console.error("native module crashed:", error);
+  }
+});
+
 ipcMain.on("verify-pin", (event, { email, pin }) => {
   try {
     const PIN = addon.verifyPin(email, pin);
@@ -85,11 +94,11 @@ ipcMain.on(
 
 ipcMain.on("get-passwords", (event, { email }) => {
   try {
-    //console.log("Recieved email:" ,email);
+    console.log("Recieved email:" ,email);
     const passwordsJSON = addon.getPasswords(email);
-    //console.log(passwordsJSON);
+    console.log(passwordsJSON);
     const passwords = JSON.parse(passwordsJSON);
-    //console.log(passwords);
+    console.log(passwords);
     event.reply("get-passwords-response", passwords);
   } catch (error) {
     console.error("native module crashed:", error);
@@ -112,11 +121,8 @@ ipcMain.on("restoreORdelete", (event, { email, password_id, zeroORone }) => {
 
 ipcMain.on("get-deletedpasswords", (event, { email }) => {
   try {
-    //console.log("Recieved email:" ,email);
     const deletedPasswordsJSON = addon.getDeletedPasswords(email);
-    //console.log(deletedPasswordsJSON);
     const deletedPasswords = JSON.parse(deletedPasswordsJSON);
-    //console.log(deletedPasswords);
     event.reply("get-deletedpasswords-response", deletedPasswords);
   } catch (error) {
     console.error("native module crashed:", error);
