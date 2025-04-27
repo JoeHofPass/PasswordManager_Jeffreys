@@ -69,7 +69,8 @@ Release/obj.target/addon/backend/passwordHash.o: \
   /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_secretbox_xchacha20poly1305.h \
   /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa2012.h \
   /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa208.h \
-  ../backend/DBconnection.h ../backend/passwordHash.h
+  ../backend/DBconnection.h ../backend/passwordHash.h \
+  ../backend/json.hpp
 ../backend/passwordHash.cpp:
 /opt/homebrew/include/libpq-fe.h:
 /opt/homebrew/include/postgres_ext.h:
@@ -142,3 +143,4 @@ Release/obj.target/addon/backend/passwordHash.o: \
 /opt/homebrew/Cellar/libsodium/1.0.20/include/sodium/crypto_stream_salsa208.h:
 ../backend/DBconnection.h:
 ../backend/passwordHash.h:
+../backend/json.hpp:

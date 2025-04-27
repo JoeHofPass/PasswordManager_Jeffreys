@@ -13,7 +13,6 @@ Napi::String StorePassword(const Napi::CallbackInfo& credentials){
     Napi::String servicePassword = credentials[3].As<Napi::String>();
     Napi::String password_id = credentials[4].As<Napi::String>();
 
-
     if(storePassword(username.Utf8Value().c_str(), serviceName.Utf8Value().c_str(), serviceUsername.Utf8Value().c_str(), servicePassword.Utf8Value().c_str(), password_id.Utf8Value().c_str())){
         return Napi::String::New(env, "1");
     } else {
@@ -28,7 +27,6 @@ Napi::String NewUser(const Napi::CallbackInfo& credentials){
     Napi::String password = credentials[2].As<Napi::String>();
     Napi::String pin = credentials[3].As<Napi::String>();
 
-
     if(newUser(fullname.Utf8Value().c_str(), username.Utf8Value().c_str(), password.Utf8Value().c_str(), pin.Utf8Value().c_str())){
         return Napi::String::New(env, "1");
     } else {
@@ -40,7 +38,6 @@ Napi::String GetFullname(const Napi::CallbackInfo& credentials){
     Napi::String username = credentials[0].As<Napi::String>();
 
     return Napi::String::New(env, getFullname(username.Utf8Value().c_str()));
-
 }
 
 Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
@@ -49,6 +46,15 @@ Napi::String VerifyUser(const Napi::CallbackInfo& credentials){
     Napi::String password = credentials[1].As<Napi::String>();
 
     if(verifyUser(username.Utf8Value().c_str(), password.Utf8Value().c_str())){
+        return Napi::String::New(env, "1");
+    } else {
+        return Napi::String::New(env, "0");
+    }
+}
+
+Napi::String LogoutUser(const Napi::CallbackInfo& credentials){
+    Napi::Env env = credentials.Env();
+    if(logoutUser() == "1"){
         return Napi::String::New(env, "1");
     } else {
         return Napi::String::New(env, "0");
@@ -110,6 +116,7 @@ Napi::Object Init(Napi::Env credentials, Napi::Object exports) {
     exports.Set("newUser", Napi::Function::New(credentials, NewUser));
     exports.Set("getFullname", Napi::Function::New(credentials, GetFullname));
     exports.Set("verifyUser", Napi::Function::New(credentials, VerifyUser));
+    exports.Set("logoutUser", Napi::Function::New(credentials, LogoutUser));
     exports.Set("verifyPin", Napi::Function::New(credentials, VerifyPin));
     exports.Set("getPasswords", Napi::Function::New(credentials, GetPasswords));
     exports.Set("restoreOrDeletePassword", Napi::Function::New(credentials, RestoreOrDeletePassword));

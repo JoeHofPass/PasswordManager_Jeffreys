@@ -7,11 +7,6 @@ function closePasswordPopup() {
   document.getElementById("passwordPopup").style.display = "none";
 }
 
-function logout() {
-  localStorage.removeItem("currentUserEmail");
-  window.location.href = "login.html";
-}
-
 function generatePassword() {
   const length = 16;
   const chars =
@@ -20,16 +15,11 @@ function generatePassword() {
   for (let i = 0; i < length; i++) {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  const generated = document.getElementById("generatedPassword");
-  generated.value = password;
-  checkPasswordStrength(password);
+  document.getElementById("generatedPassword").value = password;
 }
 
 function checkPasswordStrength(password) {
   const strengthBar = document.getElementById("strengthBar");
-  const strengthLabel = document.getElementById("strengthText");
-  if (!strengthBar || !strengthLabel) return;
-
   let strength = 0;
   if (password.length >= 8) strength++;
   if (/[A-Z]/.test(password)) strength++;
@@ -45,19 +35,21 @@ function checkPasswordStrength(password) {
     "Strong",
     "Very Strong",
   ];
-  strengthLabel.innerText = strengthText[strength - 1] || "Too Short";
+  document.getElementById("strengthText").innerText =
+    strengthText[strength - 1];
 }
 
 function togglePasswordVisibility(passwordElement, toggleButton) {
-  if (!passwordElement) return;
   const isVisible = passwordElement.dataset.visible === "true";
-  passwordElement.textContent = isVisible
-    ? "••••••••••••"
-    : passwordElement.dataset.realPassword;
-  passwordElement.dataset.visible = !isVisible;
-  toggleButton.innerHTML = isVisible
-    ? '<i class="fas fa-eye"></i>'
-    : '<i class="fas fa-eye-slash"></i>';
+  if (isVisible) {
+    passwordElement.textContent = "••••••••••••";
+    passwordElement.dataset.visible = "false";
+    toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
+  } else {
+    passwordElement.textContent = passwordElement.dataset.realPassword;
+    passwordElement.dataset.visible = "true";
+    toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+  }
 }
 
 function saveNewPassword() {
@@ -71,13 +63,15 @@ function saveNewPassword() {
   }
 
   let domain = siteName.toLowerCase().replace(/\s+/g, "");
-  if (!domain.includes(".")) domain += ".com";
-
-  const href = `https://${domain}`;
+  if (!domain.includes(".")) {
+    domain += ".com";
+  }
   const logoURL = `https://logo.clearbit.com/${domain}`;
+  //const id = Date.now().toString(36) + Math.floor(Math.random() * 1000).toString();
   const id = crypto.randomUUID();
+  //console.log("Generated ID:", id);
   localStorage.setItem("currentPasswordId", id);
-
+  const accountList = document.getElementById("accountList");
   const newAccount = document.createElement("div");
   newAccount.setAttribute("data-id", id);
   newAccount.classList.add("password-box");
@@ -90,10 +84,8 @@ function saveNewPassword() {
     </div>
     <h4>${siteName}</h4>
     <p>${userEmail}</p>
-    <a href="#" class="external-link" data-href="${href}">
-      <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    </a>
-    <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
+    <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
     <div class="password-actions">
       <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
         <i class="fas fa-eye"></i>
@@ -103,211 +95,110 @@ function saveNewPassword() {
       </button>
     </div>
   `;
+  const passwordField = newAccount.querySelector(".password-field");
+  passwordField.dataset.realPassword = password;
 
-  document.getElementById("accountList").appendChild(newAccount);
+  accountList.appendChild(newAccount);
   closePasswordPopup();
-
-  if (window.electron) {
-    const email = localStorage.getItem("currentUserEmail");
-    window.electron.send("store-password", {
-      email,
-      serviceName: siteName,
-      serviceUsername: userEmail,
-      servicePassword: password,
-      password_id: id,
-    });
-  }
+  //clearInputFields();
 }
 
 function copyPassword(button) {
   const passwordElement = button
     .closest(".password-box")
-    ?.querySelector(".password-field");
-  if (!passwordElement) return;
-
+    .querySelector(".password-field");
   const password = passwordElement.dataset.realPassword;
-  navigator.clipboard.writeText(password).then(() => {
-    button.innerHTML = '<i class="fas fa-check"></i>';
-    setTimeout(() => (button.innerHTML = '<i class="fas fa-copy"></i>'), 1500);
-  });
+
+  navigator.clipboard
+    .writeText(password)
+    .then(() => {
+      button.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-copy"></i>';
+      }, 1500);
+    })
+    .catch((err) => {
+      console.error("Failed to copy password:", err);
+    });
 }
 
 function clearInputFields() {
-  document.getElementById("siteName").value = "";
-  document.getElementById("userEmail").value = "";
-  document.getElementById("generatedPassword").value = "";
-  const bar = document.getElementById("strengthBar");
-  const label = document.getElementById("strengthText");
-  if (bar) bar.value = 0;
-  if (label) label.innerText = "";
+  console.log("Clearing input fields");
+  if (
+    document.getElementById("siteName") &&
+    document.getElementById("userEmail") &&
+    document.getElementById("generatedPassword")
+    //document.getElementById("strengthBar") &&
+    //document.getElementById("strengthText")
+  ) {
+    document.getElementById("siteName").value = "";
+    document.getElementById("userEmail").value = "";
+    document.getElementById("generatedPassword").value = "";
+    //document.getElementById("strengthBar").value = 0;
+    //document.getElementById("strengthText").innerText = "";
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
   const searchBar = document.getElementById("searchBar");
-  if (searchBar) {
-    searchBar.addEventListener("input", function () {
-      const filter = searchBar.value.toLowerCase();
-      const cards = document.querySelectorAll(".password-box");
-      cards.forEach((card) => {
-        const siteName = card.querySelector("h4").innerText.toLowerCase();
-        const userEmail = card.querySelector("p").innerText.toLowerCase();
-        card.style.display =
-          siteName.includes(filter) || userEmail.includes(filter)
-            ? "block"
-            : "none";
-      });
-    });
-  }
 
-  const passwordInput = document.getElementById("generatedPassword");
-  if (passwordInput) {
-    passwordInput.addEventListener("input", (e) =>
-      checkPasswordStrength(e.target.value)
-    );
-  }
-  const deleteBtn = document.getElementById("deletepassbtn");
-  if (deleteBtn) {
-    deleteBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      const email = localStorage.getItem("currentUserEmail");
-      const password_id = localStorage.getItem("currentPasswordId");
-      const zeroORone = "0";
-      if (!window.electron) return;
-      window.electron.send("restoreORdelete", {
-        email,
-        password_id,
-        zeroORone,
-      });
-    });
-  }
+  searchBar.addEventListener("input", function () {
+    let filter = searchBar.value.toLowerCase();
+    let cards = document.querySelectorAll(".password-box");
 
-  const restoreBtn = document.getElementById("confirmBtn");
-  if (restoreBtn) {
-    restoreBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      const email = localStorage.getItem("currentUserEmail");
-      const password_id = localStorage.getItem("currentPasswordId");
-      const zeroORone = "1";
-      if (!window.electron) return;
-      window.electron.send("restoreORdelete", {
-        email,
-        password_id,
-        zeroORone,
-      });
-    });
-  }
+    cards.forEach((card) => {
+      let siteName = card.querySelector("h4").innerText.toLowerCase();
+      let userEmail = card.querySelector("p").innerText.toLowerCase();
 
-  // Bind result listener only once
-  window.electron.removeAllListeners("restoreORdelete-response");
-  window.electron.on("restoreORdelete-response", (response) => {
-    if (response === "success") {
-      const id = localStorage.getItem("currentPasswordId");
-      const card = document.querySelector(`.password-box[data-id="${id}"]`);
-      if (card) card.remove();
-      closeDeleteModal();
-      closeModal(); // for recovery
-      localStorage.removeItem("currentPasswordId");
-    } else {
-      console.error("Delete/Restore operation failed.");
-    }
+      if (siteName.includes(filter) || userEmail.includes(filter)) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
   });
 });
 
 let inactivityTimer;
 let currentAction = null;
+//let currentPasswordId = null;
 
 function promptPin(action, id) {
   currentAction = action;
-  if (id) currentPasswordId(id);
-
+  currentPasswordId(id);
   const cancelButton = document.getElementById("cancel-pin-btn");
-  const pinStatus = document.getElementById("pin-status");
-  pinStatus?.classList.add("hidden");
-  pinStatus.textContent = "";
 
-  cancelButton.textContent = action === "unlock" ? "Logout" : "Cancel";
-  cancelButton.onclick = action === "unlock" ? logout : closePinModal;
-
-  document.getElementById("pin-modal").classList.remove("hidden");
-}
-
-function submitPIN() {
-  const pin = document.getElementById("pin-input").value.trim();
-  const currEmail = localStorage.getItem("currentUserEmail");
-  const pinStatus = document.getElementById("pin-status");
-
-  pinStatus.classList.add("hidden");
-  pinStatus.textContent = "";
-
-  if (!pin) {
-    pinStatus.className = "pin-status error";
-    pinStatus.textContent = "❗ Please enter a PIN.";
-    pinStatus.classList.remove("hidden");
-    return;
+  if (action === "unlock") {
+    cancelButton.textContent = "Logout";
+    cancelButton.onclick = logout;
+  } else {
+    cancelButton.textContent = "Cancel";
+    cancelButton.onclick = closePinModal;
   }
-
-  const handlePinResponse = (response) => {
-    pinStatus.classList.remove("hidden");
-
-    if (response.status === "success") {
-      pinStatus.className = "pin-status success";
-      pinStatus.textContent = "✅ Access granted!";
-      setTimeout(() => {
-        document.getElementById("pin-modal").classList.add("hidden");
-        pinStatus.classList.add("hidden");
-        pinStatus.textContent = "";
-
-        switch (currentAction) {
-          case "edit":
-            openEditWindow(localStorage.getItem("currentPasswordId"));
-            break;
-          case "delete":
-            deletePasswordConfirmed();
-            break;
-          case "access-deleted":
-            window.location.href = "deletedPasswords.html";
-            break;
-          case "unlock":
-            document.body.classList.remove("locked");
-            break;
-        }
-
-        currentAction = null;
-      }, 1200);
-    } else {
-      pinStatus.className = "pin-status error";
-      pinStatus.textContent = "❌ Incorrect PIN. Try again or logout.";
-    }
-  };
-
-  if (!window.electron) return;
-  window.electron.removeAllListeners("verify-pin-response");
-  window.electron.on("verify-pin-response", handlePinResponse);
-  window.electron.send("verify-pin", { email: currEmail, pin });
+  document.getElementById("pin-modal").classList.remove("hidden");
 }
 
 function closePinModal() {
   document.getElementById("pin-modal").classList.add("hidden");
   document.getElementById("pin-input").value = "";
-  const cancelButton = document.getElementById("cancel-pin-btn");
-  cancelButton.textContent = "Cancel";
-  cancelButton.onclick = closePinModal;
-  currentAction = null;
 }
-
 function currentPasswordId(id) {
   localStorage.setItem("currentPasswordId", id);
 }
 
 function confirmDelete(id) {
+  //console.log("setting currID to ", id);
   currentPasswordId(id);
   document.getElementById("delete-confirmation").classList.remove("hidden");
 }
 
 function deletePasswordConfirmed() {
   const id = localStorage.getItem("currentPasswordId");
+  //console.log("Deleting password with ID:", id);
   const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (card) card.remove();
+  if (card) {
+    card.remove();
+  }
   closeDeleteModal();
   localStorage.removeItem("currentPasswordId");
 }
@@ -317,21 +208,11 @@ function closeDeleteModal() {
 }
 
 function openEditWindow(id) {
-  const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (!card) return;
-  const siteName = card.querySelector("h4")?.innerText || "";
-  const userEmail = card.querySelector("p")?.innerText || "";
-  const password =
-    card.querySelector(".password-field")?.dataset.realPassword || "";
-
+  document.getElementById("passwordPopup").style.display = "block";
+  document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;
-  document.getElementById("generatedPassword").value = password;
-  checkPasswordStrength(password);
-  document.getElementById("passwordPopup").style.display = "block";
-  document
-    .getElementById("passwordPopup")
-    .scrollIntoView({ behavior: "smooth" });
+  document.getElementById("generatedPassword").value = "";
 }
 
 function resetInactivityTimer() {
@@ -347,24 +228,30 @@ function resetInactivityTimer() {
 
 resetInactivityTimer();
 
+// Called when user clicks the Deleted tab
 function requestPinToAccessDeleted() {
   currentAction = "access-deleted";
   document.body.classList.add("locked");
-  const cancelButton = document.getElementById("cancel-pin-btn");
-  cancelButton.textContent = "Cancel";
-  cancelButton.onclick = closePinModal;
-
-  const pinStatus = document.getElementById("pin-status");
-  pinStatus.classList.add("hidden");
-  pinStatus.textContent = "";
-
   document.getElementById("pin-modal").classList.remove("hidden");
 }
 
+// Cancel button behavior: block if it's during a security lock
 function cancelPin() {
   if (currentAction === "unlock") {
     alert("You must verify your PIN to continue using GateKeep.");
     return;
   }
   closePinModal();
+}
+
+function closePinModal() {
+  document.getElementById("pin-modal").classList.add("hidden");
+  document.getElementById("pin-input").value = "";
+
+  // Restore button state just in case
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+
+  currentAction = null;
 }

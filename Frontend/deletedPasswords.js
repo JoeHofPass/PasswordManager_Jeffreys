@@ -3,17 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function openPINModal() {
-  const modal = document.getElementById("pin-modal");
-  const errorMsg = document.getElementById("pin-error");
-
-  if (modal) modal.classList.remove("hidden");
-  if (errorMsg) errorMsg.classList.add("hidden");
+  document.getElementById("pin-modal").style.display = "flex";
+  document.getElementById("pin-error").classList.add("hidden");
 }
 
 function cancelPIN() {
-  document.getElementById("pin-modal").classList.add("hidden");
-  document.getElementById("pin-input").value = "";
-  document.getElementById("pin-error").classList.add("hidden");
+  window.location.href = "home.html";
 }
 
 function submitPIN() {
@@ -71,11 +66,13 @@ function fetchDeletedPasswords(email) {
           <h4>${password.service}</h4>
           <p>${password.username}</p>
           <div class="password-container">
-            <input type="password" value="${password.password}" class="password-field" readonly />
+            <input type="password" class="password-field" readonly />
             <button class="toggle-password" onclick="togglePassword(this)">👁</button>
             <i class="fa-solid fa-trash-arrow-up restore-icon" title="Recover password" onclick="promptRecovery('${id}')"></i>
           </div>
         </div>`;
+      const passwordField = accountCard.querySelector(".password-field");
+      passwordField.value = password.password;
       deletedList.appendChild(accountCard);
     });
 
@@ -94,9 +91,7 @@ function promptRecovery(passwordId) {
 function recoverPassword() {
   const id = localStorage.getItem("currentPasswordId");
   const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (card) {
-    card.remove();
-  }
+  if (card) {card.remove();}
   closeModal();
   localStorage.removeItem("currentPasswordId");
 }
