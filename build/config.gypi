@@ -21,12 +21,7 @@
   },
   "variables": {
     "asan": 0,
-<<<<<<< Updated upstream
     "clang": 0,
-=======
-    "build_v8_with_gn": "false",
-    "built_with_electron": 1,
->>>>>>> Stashed changes
     "coverage": "false",
     "dcheck_always_on": 0,
     "debug_nghttp2": "false",
@@ -395,17 +390,10 @@
       "lib/worker_threads.js",
       "lib/zlib.js"
     ],
-<<<<<<< Updated upstream
     "node_module_version": 127,
     "node_no_browser_globals": "false",
     "node_prefix": "\\usr\\local",
     "node_release_urlbase": "https://nodejs.org/download/release/",
-=======
-    "node_module_version": 133,
-    "node_no_browser_globals": "false",
-    "node_prefix": "\\usr\\local",
-    "node_release_urlbase": "",
->>>>>>> Stashed changes
     "node_shared": "false",
     "node_shared_ada": "false",
     "node_shared_brotli": "false",
@@ -425,18 +413,14 @@
     "node_target_type": "executable",
     "node_use_amaro": "true",
     "node_use_bundled_v8": "true",
-    "node_use_node_code_cache": "false",
-    "node_use_node_snapshot": "false",
+    "node_use_node_code_cache": "true",
+    "node_use_node_snapshot": "true",
     "node_use_openssl": "true",
     "node_use_v8_platform": "true",
     "node_with_ltcg": "true",
     "node_without_node_options": "false",
     "node_write_snapshot_as_array_literals": "true",
     "openssl_is_fips": "false",
-<<<<<<< Updated upstream
-=======
-    "openssl_no_asm": 1,
->>>>>>> Stashed changes
     "openssl_quic": "true",
     "ossfuzz": "false",
     "shlib_suffix": "so.127",
@@ -444,8 +428,7 @@
     "target_arch": "x64",
     "ubsan": 0,
     "use_prefix_to_find_headers": "false",
-    "using_electron_config_gypi": 1,
-    "v8_enable_31bit_smis_on_64bit_arch": 1,
+    "v8_enable_31bit_smis_on_64bit_arch": 0,
     "v8_enable_extensible_ro_snapshot": 0,
     "v8_enable_gdbjit": 0,
     "v8_enable_hugepage": 0,
@@ -455,39 +438,22 @@
     "v8_enable_lite_mode": 0,
     "v8_enable_maglev": 0,
     "v8_enable_object_print": 1,
-<<<<<<< Updated upstream
     "v8_enable_pointer_compression": 0,
     "v8_enable_sandbox": 0,
     "v8_enable_shared_ro_heap": 1,
     "v8_enable_short_builtin_calls": 1,
     "v8_enable_wasm_simd256_revec": 1,
-=======
-    "v8_enable_pointer_compression": 1,
-    "v8_enable_sandbox": 1,
-    "v8_enable_shared_ro_heap": 0,
->>>>>>> Stashed changes
     "v8_enable_webassembly": 1,
     "v8_optimized_debug": 1,
     "v8_promise_internal_field_count": 1,
     "v8_random_seed": 0,
     "v8_trace_maps": 0,
     "v8_use_siphash": 1,
-<<<<<<< Updated upstream
     "want_separate_host_toolset": 0,
     "nodedir": "C:\\Users\\danie\\AppData\\Local\\node-gyp\\Cache\\22.14.0",
     "python": "C:\\Users\\danie\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
     "standalone_static_library": 1,
     "msbuild_path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-=======
-    "want_separate_host_toolset": 1,
-    "nodedir": "C:\\Users\\danie\\.electron-gyp\\35.2.1",
-    "python": "C:\\Users\\danie\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
-    "standalone_static_library": 1,
-    "msbuild_path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-    "runtime": "electron",
-    "target": "35.2.1",
-    "build_from_source": "true",
->>>>>>> Stashed changes
     "cache": "C:\\Users\\danie\\AppData\\Local\\npm-cache",
     "globalconfig": "C:\\Users\\danie\\AppData\\Roaming\\npm\\etc\\npmrc",
     "global_prefix": "C:\\Users\\danie\\AppData\\Roaming\\npm",
