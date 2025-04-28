@@ -69,36 +69,32 @@ ipcMain.on("verify-pin", (event, { email, pin }) => {
   }
 });
 
-ipcMain.on(
-  "store-password",
-  (event, { email, serviceName, serviceUsername, servicePassword, password_id }) => {
-    try {
-      //const encryptedBuffer = Buffer.from(servicePassword);
-      const result = addon.storePassword(
-        email,
-        serviceName,
-        serviceUsername,
-        servicePassword,
-        password_id
-      );
-      event.reply(
-        "storePassword-response",
-        result === "1" ? "success" : "fail"
-      );
-    } catch (error) {
-      console.error("native module crashed:", error);
-      event.reply("storePassword-response", "error");
-    }
+ipcMain.on("store-password", (event, { email, serviceName, serviceUsername, servicePassword, password_id }) => {
+  try {
+    const result = addon.storePassword(
+      email,
+      serviceName,
+      serviceUsername,
+      servicePassword,
+      password_id
+    );
+    event.reply("storePassword-response",
+      result === "1" ? "success" : "fail"
+    );
+  } catch (error) {
+    console.error("native module crashed:", error);
+    event.reply("storePassword-response", "error");
   }
+}
 );
 
 ipcMain.on("get-passwords", (event, { email }) => {
   try {
-    console.log("Recieved email:" ,email);
+    //console.log("Recieved email:", email);
     const passwordsJSON = addon.getPasswords(email);
-    console.log(passwordsJSON);
+    //console.log(passwordsJSON);
     const passwords = JSON.parse(passwordsJSON);
-    console.log(passwords);
+    //console.log(passwords);
     event.reply("get-passwords-response", passwords);
   } catch (error) {
     console.error("native module crashed:", error);
