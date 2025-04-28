@@ -1,9 +1,29 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const addon = require("../build/Release/addon.node");
-const { eventNames } = require("process");
+
+let addon;
+
+// Handle Squirrel events immediately (important for .exe installer)
+if (require("electron-squirrel-startup")) {
+  app.quit();
+}
+
+// Correctly load addon depending on environment
+if (app.isPackaged) {
+  addon = require(path.join(
+    process.resourcesPath,
+    "app",
+    "build",
+    "Release",
+    "addon.node"
+  ));
+} else {
+  addon = require(path.join(__dirname, "..", "build", "Release", "addon.node"));
+}
 
 let mainWindow;
+
+// Create the main application window
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
@@ -14,13 +34,17 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-  mainWindow.webContents.openDevTools();
-  mainWindow.loadFile("login.html");
+
+  mainWindow.loadFile(path.join(__dirname, "login.html"));
+
   mainWindow.webContents.on("did-fail-load", () => {
-    console.log("Page loaded: ", mainWindow.webContents.getURL());
+    console.log("Failed to load page:", mainWindow.webContents.getURL());
   });
+
+  // mainWindow.webContents.openDevTools(); // Optional for debugging
 }
 
+// IPC Event Handlers
 ipcMain.on("login", (event, { email, password }) => {
   try {
     const NEWUSER = addon.verifyUser(email, password);
@@ -31,8 +55,8 @@ ipcMain.on("login", (event, { email, password }) => {
     }
     event.reply("login-response", response);
   } catch (error) {
-    console.error("native module crashed:", error);
-    event.reply("login-reponse", "error");
+    console.error("native module crashed during login:", error);
+    event.reply("login-response", "error");
   }
 });
 
@@ -41,7 +65,7 @@ ipcMain.on("register", (event, { fullname, email, password, pin }) => {
     const NEWUSER = addon.newUser(fullname, email, password, pin);
     event.reply("register-response", NEWUSER === "1" ? "success" : "fail");
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during register:", error);
     event.reply("register-response", "error");
   }
 });
@@ -51,53 +75,53 @@ ipcMain.on("logout", (event) => {
     const result = addon.logoutUser();
     event.reply("logout-response", result === "1" ? "success" : "fail");
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during logout:", error);
   }
 });
 
 ipcMain.on("verify-pin", (event, { email, pin }) => {
   try {
     const PIN = addon.verifyPin(email, pin);
-    let response = { status: "fail" };
-    if (PIN === "1") {
-      response = { status: "success" };
-    }
+    const response = PIN === "1" ? { status: "success" } : { status: "fail" };
     event.reply("verify-pin-response", response);
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during verify-pin:", error);
     event.reply("verify-pin-response", "error");
   }
 });
 
-ipcMain.on("store-password", (event, { email, serviceName, serviceUsername, servicePassword, password_id }) => {
-  try {
-    const result = addon.storePassword(
-      email,
-      serviceName,
-      serviceUsername,
-      servicePassword,
-      password_id
-    );
-    event.reply("storePassword-response",
-      result === "1" ? "success" : "fail"
-    );
-  } catch (error) {
-    console.error("native module crashed:", error);
-    event.reply("storePassword-response", "error");
+ipcMain.on(
+  "store-password",
+  (
+    event,
+    { email, serviceName, serviceUsername, servicePassword, password_id }
+  ) => {
+    try {
+      const result = addon.storePassword(
+        email,
+        serviceName,
+        serviceUsername,
+        servicePassword,
+        password_id
+      );
+      event.reply(
+        "storePassword-response",
+        result === "1" ? "success" : "fail"
+      );
+    } catch (error) {
+      console.error("native module crashed during store-password:", error);
+      event.reply("storePassword-response", "error");
+    }
   }
-}
 );
 
 ipcMain.on("get-passwords", (event, { email }) => {
   try {
-    //console.log("Recieved email:", email);
     const passwordsJSON = addon.getPasswords(email);
-    //console.log(passwordsJSON);
     const passwords = JSON.parse(passwordsJSON);
-    //console.log(passwords);
     event.reply("get-passwords-response", passwords);
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during get-passwords:", error);
     event.reply("get-passwords-response", "error");
   }
 });
@@ -110,7 +134,7 @@ ipcMain.on("restoreORdelete", (event, { email, password_id, zeroORone }) => {
       result === "1" ? "success" : "fail"
     );
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during restoreORdelete:", error);
     event.reply("restoreORdelete-response", "error");
   }
 });
@@ -121,11 +145,12 @@ ipcMain.on("get-deletedpasswords", (event, { email }) => {
     const deletedPasswords = JSON.parse(deletedPasswordsJSON);
     event.reply("get-deletedpasswords-response", deletedPasswords);
   } catch (error) {
-    console.error("native module crashed:", error);
+    console.error("native module crashed during get-deletedpasswords:", error);
     event.reply("get-deletedpasswords-response", "error");
   }
 });
 
+// Electron lifecycle
 app.whenReady().then(() => {
   createWindow();
   app.on("activate", () => {

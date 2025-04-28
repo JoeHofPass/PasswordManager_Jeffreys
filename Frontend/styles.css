@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Quicksand", sans-serif;
+  font-family: "Orbitron", sans-serif;
 }
 
 body {
@@ -237,4 +237,23 @@ section span:hover {
 
 .hidden {
   display: none !important;
+}
+
+.toast-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #00bfff;
+  color: black;
+  padding: 15px 25px;
+  border-radius: 6px;
+  font-weight: 600;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s, top 0.3s;
+}
+.toast-message.visible {
+  top: 40px;
+  opacity: 1;
 }
