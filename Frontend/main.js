@@ -1,42 +1,23 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const addon = require("../build/Release/addon.node");
 const path = require("path");
 
-let addon;
-
-// Handle Squirrel events immediately (important for .exe installer)
-if (require("electron-squirrel-startup")) {
-  app.quit();
-}
-
-// Correctly load addon depending on environment
-if (app.isPackaged) {
-  addon = require(path.join(
-    process.resourcesPath,
-    "app",
-    "build",
-    "Release",
-    "addon.node"
-  ));
-} else {
-  addon = require(path.join(__dirname, "..", "build", "Release", "addon.node"));
-}
 
 let mainWindow;
-
 // Create the main application window
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 1000,
     webPreferences: {
+      devTools: false,
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
-
+  //mainWindow.webContents.openDevTools();
   mainWindow.loadFile(path.join(__dirname, "login.html"));
-
   mainWindow.webContents.on("did-fail-load", () => {
     console.log("Failed to load page:", mainWindow.webContents.getURL());
   });

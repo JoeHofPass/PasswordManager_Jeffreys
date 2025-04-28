@@ -120,9 +120,11 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         free(ciphertext_withNonce);
         PQfinish(conn);
         return 0;
-    } else printf("Password cannot be updated because it does not exist. %s\n", username);
+    }
 
     int updatedRows = atoi(PQcmdTuples(updateRes));
+    if(updatedRows > 0) printf("Password updated. %s\n", username);
+    
     if(updatedRows == 0)
     {
         const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
@@ -142,22 +144,6 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         PQclear(res);
     }
 
-    // const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
-    // const char *creds[] = {userID.c_str(), serviceName, serviceUsername, (const char *)ciphertext_withNonce, password_id};
-    // int paramLengths[] = {0, 0, 0, static_cast<int>(ciphertextLenTotal), 0};
-    // int paramFormats[] = {0, 0, 0, 1, 0};
-
-    // PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, paramLengths, paramFormats, 0);
-    // if (PQresultStatus(res) != PGRES_COMMAND_OK)
-    // {
-    //     fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
-    //     PQclear(res);
-    //     free(ciphertext_withNonce);
-    //     PQfinish(conn);
-    //     return 0;
-    // } else printf("Password stored successfully for %s\n", username);
-
-    //PQclear(res);
     free(ciphertext_withNonce);
     PQfinish(conn);
     return 1;
