@@ -4,31 +4,7 @@
   "version": "1.0.0",
   "description": "GateKeep Password Manager",
   "author": "Jailhouse Lock",
-  "main": "./Frontend/main.js",
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "./gatekeep4_ico.ico",
-        "extraResource": [
-          "build/Release/addon.node",
-          "Frontend"
-        ]
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "setupIcon": "./gatekeep4_ico.ico",
-            "shortcutName": "GateKeep",
-            "name": "GateKeep"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip"
-        }
-      ]
-    }
-  },
+  "main": "Frontend/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
