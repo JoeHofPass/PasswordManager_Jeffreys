@@ -28,6 +28,7 @@
     <Filter Include="C:\Users\danie">
       <UniqueIdentifier>{89A1EBE1-AED3-755D-6AE8-4E34048DB008}</UniqueIdentifier>
     </Filter>
+<<<<<<< Updated upstream
     <Filter Include="C:\Users\danie\AppData">
       <UniqueIdentifier>{F852EB63-437C-846A-220F-8D9ED6DAEC1D}</UniqueIdentifier>
     </Filter>
@@ -50,6 +51,27 @@
       <UniqueIdentifier>{77348C0E-2034-7791-74D5-63C077DF5A3B}</UniqueIdentifier>
     </Filter>
     <Filter Include="C:\Users\danie\AppData\Roaming\npm\node_modules\npm\node_modules\node-gyp\src">
+=======
+    <Filter Include="C:\Users\danie\Documents">
+      <UniqueIdentifier>{87566BA0-CA33-1144-65F5-087C5F9D6C20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub">
+      <UniqueIdentifier>{84E6FEBA-825D-6EBF-DAAC-F202DA6E3F7D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys">
+      <UniqueIdentifier>{68466F13-C05E-A883-975B-3A876B15315C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules">
+      <UniqueIdentifier>{56DF7A98-063D-FB9D-485C-089023B4C16A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules\@electron">
+      <UniqueIdentifier>{6FD122B1-87CE-5BE7-127F-692B6E499EA3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules\@electron\node-gyp">
+      <UniqueIdentifier>{77348C0E-2034-7791-74D5-63C077DF5A3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules\@electron\node-gyp\src">
+>>>>>>> Stashed changes
       <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
     </Filter>
     <Filter Include="..">
@@ -66,8 +88,13 @@
     <ClCompile Include="..\backend\passwordHash.cpp">
       <Filter>..\backend</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
     <ClCompile Include="C:\Users\danie\AppData\Roaming\npm\node_modules\npm\node_modules\node-gyp\src\win_delay_load_hook.cc">
       <Filter>C:\Users\danie\AppData\Roaming\npm\node_modules\npm\node_modules\node-gyp\src</Filter>
+=======
+    <ClCompile Include="C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules\@electron\node-gyp\src\win_delay_load_hook.cc">
+      <Filter>C:\Users\danie\Documents\GitHub\PasswordManager_Jeffreys\node_modules\@electron\node-gyp\src</Filter>
+>>>>>>> Stashed changes
     </ClCompile>
     <None Include="..\binding.gyp">
       <Filter>..</Filter>
