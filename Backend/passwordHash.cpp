@@ -107,25 +107,57 @@ int storePassword(const char *username, const char *serviceName, const char *ser
         free(ciphertext_withNonce);
         return 0;
     }
-    const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
-    const char *creds[] = {userID.c_str(), serviceName, serviceUsername, (const char *)ciphertext_withNonce, password_id};
-    int paramLengths[] = {0, 0, 0, static_cast<int>(ciphertextLenTotal), 0};
-    int paramFormats[] = {0, 0, 0, 1, 0};
 
-    PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, paramLengths, paramFormats, 0);
-    if (PQresultStatus(res) != PGRES_COMMAND_OK)
+    const char *updatePassword = "UPDATE credentials SET service_name = $1, service_username = $2, service_password = $3 WHERE user_id = $4 AND password_id = $5";
+    const char *updateCreds[] = {serviceName, serviceUsername, (const char *)ciphertext_withNonce, userID.c_str(), password_id};
+    int paramLengths[] = {0, 0, static_cast<int>(ciphertextLenTotal), 0, 0};
+    int paramFormats[] = {0, 0, 1, 0, 0};
+    PGresult *updateRes = PQexecParams(conn, updatePassword, 5, NULL, updateCreds, paramLengths, paramFormats, 0);
+    if (PQresultStatus(updateRes) != PGRES_COMMAND_OK)
     {
-        fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
-        PQclear(res);
+        fprintf(stderr, "failed to update password: %s\n", PQerrorMessage(conn));
+        PQclear(updateRes);
         free(ciphertext_withNonce);
         PQfinish(conn);
         return 0;
-    }
-    else
+    } else printf("Password cannot be updated because it does not exist. %s\n", username);
+
+    int updatedRows = atoi(PQcmdTuples(updateRes));
+    if(updatedRows == 0)
     {
-        printf("Password stored successfully for %s\n", username);
+        const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
+        const char *creds[] = {userID.c_str(), serviceName, serviceUsername, (const char *)ciphertext_withNonce, password_id};
+        int paramLengths[] = {0, 0, 0, static_cast<int>(ciphertextLenTotal), 0};
+        int paramFormats[] = {0, 0, 0, 1, 0};
+    
+        PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, paramLengths, paramFormats, 0);
+        if (PQresultStatus(res) != PGRES_COMMAND_OK)
+        {
+            fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
+            PQclear(res);
+            free(ciphertext_withNonce);
+            PQfinish(conn);
+            return 0;
+        } else printf("Password stored successfully for %s\n", username);
+        PQclear(res);
     }
-    PQclear(res);
+
+    // const char *addPassword = "INSERT INTO credentials (user_id, service_name, service_username, service_password, password_id) VALUES ($1,$2,$3,$4,$5)";
+    // const char *creds[] = {userID.c_str(), serviceName, serviceUsername, (const char *)ciphertext_withNonce, password_id};
+    // int paramLengths[] = {0, 0, 0, static_cast<int>(ciphertextLenTotal), 0};
+    // int paramFormats[] = {0, 0, 0, 1, 0};
+
+    // PGresult *res = PQexecParams(conn, addPassword, 5, NULL, creds, paramLengths, paramFormats, 0);
+    // if (PQresultStatus(res) != PGRES_COMMAND_OK)
+    // {
+    //     fprintf(stderr, "failed to store password: %s\n", PQerrorMessage(conn));
+    //     PQclear(res);
+    //     free(ciphertext_withNonce);
+    //     PQfinish(conn);
+    //     return 0;
+    // } else printf("Password stored successfully for %s\n", username);
+
+    //PQclear(res);
     free(ciphertext_withNonce);
     PQfinish(conn);
     return 1;
@@ -535,7 +567,6 @@ string getPasswords(const char *username)
             PQfinish(conn);
             return "[]";
         }
-        printf("Decrypted password: '%.*s' (len=%zu)\n", (int)decryptedPasswordLen, decryptedPassword, decryptedPasswordLen);
 
         json passwordData ={
             {"service", PQgetvalue(res, i, 0)},

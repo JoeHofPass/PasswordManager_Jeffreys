@@ -664,8 +664,25 @@ body.light .btn-add {
 }
 
 .error-message {
-  color: #ff4e4e;
   margin-top: 10px;
+  padding: 10px 15px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 1.1rem;
+  text-align: center;
+  border: 2px solid #ff4e4e;
+  border-radius: 6px;
+  background-color: rgba(255, 0, 0, 0.08);
+  color: #ff4e4e;
+  text-shadow: 0 0 5px #ff4e4e;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: none;
+  box-shadow: 0 0 6px #ff4e4e50;
+}
+
+.error-message.visible {
+  opacity: 1;
+  animation: shake 0.3s ease-in-out, glow-red 1.2s ease-in-out infinite;
 }
 
 .hidden {
@@ -673,10 +690,91 @@ body.light .btn-add {
 }
 
 /* ===== PIN MODAL ===== */
-body.locked *:not(#pin-modal):not(#pin-modal *) {
-  pointer-events: none;
-  filter: blur(2px);
+.pin-status {
+  margin-top: 10px;
+  padding: 10px 16px;
+  font-family: "Share Tech Mono", monospace;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  text-shadow: none;
+  box-shadow: none;
 }
+
+/* === SUCCESS STYLE: Access Granted === */
+.pin-status.success {
+  background-color: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+  border-color: #00ff88;
+  text-shadow: 0 0 6px #00ff88, 0 0 10px #00ff88;
+  box-shadow: 0 0 10px #00ff8850;
+  animation: flicker-green 1.2s ease-in-out infinite alternate;
+  opacity: 1;
+}
+
+/* === ERROR STYLE: Access Denied === */
+.pin-status.error {
+  background-color: rgba(255, 0, 0, 0.08);
+  color: #ff4e4e;
+  border-color: #ff4e4e;
+  text-shadow: 0 0 6px #ff4e4e;
+  box-shadow: 0 0 8px #ff4e4e50;
+  animation: shake 0.3s ease-in-out, glow-red 1.2s ease-in-out infinite;
+  opacity: 1;
+}
+
+/* === Animations === */
+@keyframes flicker-green {
+  0%,
+  18%,
+  22%,
+  25%,
+  53%,
+  57%,
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 6px #00ff88, 0 0 12px #00ff88;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.3;
+    text-shadow: none;
+  }
+}
+
+@keyframes glow-red {
+  0%,
+  100% {
+    box-shadow: 0 0 6px #ff4e4e80;
+  }
+  50% {
+    box-shadow: 0 0 12px #ff4e4eff;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 /* Copy passwords button */
 .password-actions {
   display: flex;

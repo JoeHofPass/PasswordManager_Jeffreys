@@ -16,10 +16,12 @@ function generatePassword() {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   document.getElementById("generatedPassword").value = password;
+  checkPasswordStrength(password);
 }
 
 function checkPasswordStrength(password) {
   const strengthBar = document.getElementById("strengthBar");
+  if (!strengthBar) return;
   let strength = 0;
   if (password.length >= 8) strength++;
   if (/[A-Z]/.test(password)) strength++;
@@ -35,21 +37,20 @@ function checkPasswordStrength(password) {
     "Strong",
     "Very Strong",
   ];
-  document.getElementById("strengthText").innerText =
-    strengthText[strength - 1];
+
+  document.getElementById("strengthText").innerText = strengthText[strength - 1] || "Too Short";
 }
 
 function togglePasswordVisibility(passwordElement, toggleButton) {
+  if (!passwordElement) return;
   const isVisible = passwordElement.dataset.visible === "true";
-  if (isVisible) {
-    passwordElement.textContent = "••••••••••••";
-    passwordElement.dataset.visible = "false";
-    toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
-  } else {
-    passwordElement.textContent = passwordElement.dataset.realPassword;
-    passwordElement.dataset.visible = "true";
-    toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
-  }
+  passwordElement.textContent = isVisible
+    ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+    : passwordElement.dataset.realPassword;
+  passwordElement.dataset.visible = !isVisible;
+  toggleButton.innerHTML = isVisible
+    ? '<i class="fas fa-eye"></i>'
+    : '<i class="fas fa-eye-slash"></i>';
 }
 
 function saveNewPassword() {
@@ -67,17 +68,29 @@ function saveNewPassword() {
     domain += ".com";
   }
   const logoURL = `https://logo.clearbit.com/${domain}`;
-  //const id = Date.now().toString(36) + Math.floor(Math.random() * 1000).toString();
-  const id = crypto.randomUUID();
-  //console.log("Generated ID:", id);
-  localStorage.setItem("currentPasswordId", id);
+  // const id = crypto.randomUUID();
+  // localStorage.setItem("currentPasswordId", id);
+  let id = localStorage.getItem("currentPasswordId");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("currentPasswordId", id);
+  }
   const accountList = document.getElementById("accountList");
-  const newAccount = document.createElement("div");
-  newAccount.setAttribute("data-id", id);
-  newAccount.classList.add("password-box");
-  newAccount.style.position = "relative";
+  let existingPassword = document.querySelector(`.password-box[data-id="${id}"]`);
+  if (existingPassword) {
+    existingPassword.querySelector("h4").innerText = siteName;
+    existingPassword.querySelector("p").innerText = userEmail;
+    existingPassword.querySelector(".site-logo").src = logoURL;
+    existingPassword.querySelector(".password-field").dataset.realPassword = password;
+    existingPassword.querySelector(".password-field").textContent = "••••••••••••";
+    existingPassword.querySelector(".password-field").dataset.visible = "false";
+  } else {
+    const newAccount = document.createElement("div");
+    newAccount.setAttribute("data-id", id);
+    newAccount.classList.add("password-box");
+    newAccount.style.position = "relative";
 
-  newAccount.innerHTML = `
+    newAccount.innerHTML = `
     <div class="icon-row">
       <i class="fas fa-pencil-alt edit-icon" title="Edit password" onclick="promptPin('edit', '${id}')"></i>
       <i class="fas fa-trash-alt delete-icon" title="Delete password" onclick="confirmDelete('${id}')"></i>
@@ -94,32 +107,25 @@ function saveNewPassword() {
         <i class="fas fa-copy"></i>
       </button>
     </div>
-  `;
-  const passwordField = newAccount.querySelector(".password-field");
-  passwordField.dataset.realPassword = password;
-
-  accountList.appendChild(newAccount);
+    `;
+    const passwordField = newAccount.querySelector(".password-field");
+    passwordField.dataset.realPassword = password;
+    accountList.appendChild(newAccount);
+  }
   closePasswordPopup();
-  //clearInputFields();
 }
 
 function copyPassword(button) {
   const passwordElement = button
     .closest(".password-box")
-    .querySelector(".password-field");
-  const password = passwordElement.dataset.realPassword;
+    ?.querySelector(".password-field");
+  if (!passwordElement) return;
 
-  navigator.clipboard
-    .writeText(password)
-    .then(() => {
-      button.innerHTML = '<i class="fas fa-check"></i>';
-      setTimeout(() => {
-        button.innerHTML = '<i class="fas fa-copy"></i>';
-      }, 1500);
-    })
-    .catch((err) => {
-      console.error("Failed to copy password:", err);
-    });
+  const password = passwordElement.dataset.realPassword;
+  navigator.clipboard.writeText(password).then(() => {
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => (button.innerHTML = '<i class="fas fa-copy"></i>'), 1500);
+  });
 }
 
 function clearInputFields() {
@@ -141,64 +147,83 @@ function clearInputFields() {
 
 document.addEventListener("DOMContentLoaded", function () {
   const searchBar = document.getElementById("searchBar");
-
-  searchBar.addEventListener("input", function () {
-    let filter = searchBar.value.toLowerCase();
-    let cards = document.querySelectorAll(".password-box");
-
-    cards.forEach((card) => {
-      let siteName = card.querySelector("h4").innerText.toLowerCase();
-      let userEmail = card.querySelector("p").innerText.toLowerCase();
-
-      if (siteName.includes(filter) || userEmail.includes(filter)) {
-        card.style.display = "block";
-      } else {
-        card.style.display = "none";
-      }
+  if (searchBar) {
+    searchBar.addEventListener("input", () => {
+      const filter = searchBar.value.toLowerCase();
+      document.querySelectorAll(".password-box").forEach((card) => {
+        const siteName = card.querySelector("h4").innerText.toLowerCase();
+        const userEmail = card.querySelector("p").innerText.toLowerCase();
+        card.style.display =
+          siteName.includes(filter) || userEmail.includes(filter)
+            ? "block"
+            : "none";
+      });
     });
-  });
+  }
+
+  const passwordInput = document.getElementById("generatedPassword");
+  passwordInput?.addEventListener("input", (e) =>
+    checkPasswordStrength(e.target.value)
+  );
 });
 
 let inactivityTimer;
 let currentAction = null;
-//let currentPasswordId = null;
+
+// function promptPin(action, id) {
+//   currentAction = action;
+//   currentPasswordId(id);
+//   const cancelButton = document.getElementById("cancel-pin-btn");
+
+//   if (action === "unlock") {
+//     cancelButton.textContent = "Logout";
+//     cancelButton.onclick = logout;
+//   } else {
+//     cancelButton.textContent = "Cancel";
+//     cancelButton.onclick = closePinModal;
+//   }
+//   document.getElementById("pin-modal").classList.remove("hidden");
+// }
 
 function promptPin(action, id) {
-  currentAction = action;
-  currentPasswordId(id);
-  const cancelButton = document.getElementById("cancel-pin-btn");
-
-  if (action === "unlock") {
-    cancelButton.textContent = "Logout";
-    cancelButton.onclick = logout;
-  } else {
-    cancelButton.textContent = "Cancel";
-    cancelButton.onclick = closePinModal;
+  window.currentAction = action;
+  if (id) {
+    localStorage.setItem("currentPasswordId", id);
   }
+
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  const pinStatus = document.getElementById("pin-status");
+  pinStatus?.classList.add("hidden");
+  pinStatus.textContent = "";
+
+  cancelButton.textContent = action === "unlock" ? "Logout" : "Cancel";
+  cancelButton.onclick = action === "unlock" ? logout : closePinModal;
+
   document.getElementById("pin-modal").classList.remove("hidden");
 }
 
 function closePinModal() {
   document.getElementById("pin-modal").classList.add("hidden");
   document.getElementById("pin-input").value = "";
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+  currentAction = null;
 }
+
 function currentPasswordId(id) {
   localStorage.setItem("currentPasswordId", id);
 }
 
 function confirmDelete(id) {
-  //console.log("setting currID to ", id);
   currentPasswordId(id);
   document.getElementById("delete-confirmation").classList.remove("hidden");
 }
 
 function deletePasswordConfirmed() {
   const id = localStorage.getItem("currentPasswordId");
-  //console.log("Deleting password with ID:", id);
   const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (card) {
-    card.remove();
-  }
+  if (card) { card.remove(); }
   closeDeleteModal();
   localStorage.removeItem("currentPasswordId");
 }
@@ -208,11 +233,27 @@ function closeDeleteModal() {
 }
 
 function openEditWindow(id) {
-  document.getElementById("passwordPopup").style.display = "block";
-  document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
+  // document.getElementById("passwordPopup").style.display = "block";
+  // document.getElementById("passwordPopup").scrollIntoView({ behavior: "smooth" });
+  // document.getElementById("siteName").value = siteName;
+  // document.getElementById("userEmail").value = userEmail;
+  // document.getElementById("generatedPassword").value = "";
+  const card = document.querySelector(`.password-box[data-id="${id}"]`);
+  if (!card) return;
+
+  const siteName = card.querySelector("h4")?.innerText || "";
+  const userEmail = card.querySelector("p")?.innerText || "";
+  const password = card.querySelector(".password-field")?.dataset.realPassword || "";
+
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;
-  document.getElementById("generatedPassword").value = "";
+  document.getElementById("generatedPassword").value = password;
+
+  const passwordPopup = document.getElementById("passwordPopup");
+  if (passwordPopup) {
+    passwordPopup.style.display = "block";
+    passwordPopup.scrollIntoView({ behavior: "smooth" });
+  }
 }
 
 function resetInactivityTimer() {
@@ -229,9 +270,22 @@ function resetInactivityTimer() {
 resetInactivityTimer();
 
 // Called when user clicks the Deleted tab
+// function requestPinToAccessDeleted() {
+//   currentAction = "access-deleted";
+//   document.body.classList.add("locked");
+//   document.getElementById("pin-modal").classList.remove("hidden");
+// }
 function requestPinToAccessDeleted() {
   currentAction = "access-deleted";
   document.body.classList.add("locked");
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+
+  const pinStatus = document.getElementById("pin-status");
+  pinStatus.classList.add("hidden");
+  pinStatus.textContent = "";
+
   document.getElementById("pin-modal").classList.remove("hidden");
 }
 
@@ -242,16 +296,4 @@ function cancelPin() {
     return;
   }
   closePinModal();
-}
-
-function closePinModal() {
-  document.getElementById("pin-modal").classList.add("hidden");
-  document.getElementById("pin-input").value = "";
-
-  // Restore button state just in case
-  const cancelButton = document.getElementById("cancel-pin-btn");
-  cancelButton.textContent = "Cancel";
-  cancelButton.onclick = closePinModal;
-
-  currentAction = null;
 }

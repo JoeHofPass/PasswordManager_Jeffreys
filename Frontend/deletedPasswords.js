@@ -1,43 +1,88 @@
 document.addEventListener("DOMContentLoaded", () => {
   openPINModal();
+  const pinForm = document.getElementById("pin-form");
+  if (pinForm) {
+    pinForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitPIN();
+    });
+  }
 });
 
 function openPINModal() {
   document.getElementById("pin-modal").style.display = "flex";
-  document.getElementById("pin-error").classList.add("hidden");
+  document.getElementById("pin-status").classList.add("hidden");
 }
 
 function cancelPIN() {
   window.location.href = "home.html";
 }
 
+// function submitPIN() {
+//   const pin = document.getElementById("pin-input").value.trim();
+//   const currEmail = localStorage.getItem("currentUserEmail");
+
+//   if (!pin) {
+//     document.getElementById("pin-error").textContent = "Please enter a PIN.";
+//     document.getElementById("pin-error").classList.remove("hidden");
+//     return;
+//   }
+
+//   // ✅ Declare the handler FIRST
+//   const handlePinResponse = (response) => {
+//     if (response.status === "success") {
+//       document.getElementById("pin-modal").style.display = "none";
+//       fetchDeletedPasswords(currEmail);
+//     } else {
+//       document.getElementById("pin-error").textContent =
+//         "Incorrect PIN. Access denied.";
+//       document.getElementById("pin-error").classList.remove("hidden");
+//     }
+//   };
+
+//   // ✅ Now safe to remove and attach listener
+//   window.electron.removeAllListeners("verify-pin-response", handlePinResponse);
+//   window.electron.on("verify-pin-response", handlePinResponse);
+
+//   // ✅ Send IPC
+//   window.electron.send("verify-pin", { email: currEmail, pin });
+// }
+
 function submitPIN() {
   const pin = document.getElementById("pin-input").value.trim();
   const currEmail = localStorage.getItem("currentUserEmail");
+  const pinStatus = document.getElementById("pin-status");
+
+  pinStatus.textContent = "";
+  pinStatus.classList.add("hidden");
 
   if (!pin) {
-    document.getElementById("pin-error").textContent = "Please enter a PIN.";
-    document.getElementById("pin-error").classList.remove("hidden");
+    pinStatus.textContent = "❗ Please enter a PIN.";
+    pinStatus.className = "pin-status error";
+    pinStatus.classList.remove("hidden");
     return;
   }
 
-  // ✅ Declare the handler FIRST
-  const handlePinResponse = (response) => {
+  // Correctly declare handler BEFORE sending
+  window.electron.removeAllListeners("verify-pin-response");
+  window.electron.on("verify-pin-response", (response) => {
+    pinStatus.classList.remove("hidden");
+
     if (response.status === "success") {
-      document.getElementById("pin-modal").style.display = "none";
-      fetchDeletedPasswords(currEmail);
+      pinStatus.textContent = "✅ Access granted!";
+      pinStatus.className = "pin-status success";
+
+      setTimeout(() => {
+        document.getElementById("pin-modal").style.display = "none";
+        pinStatus.classList.add("hidden");
+        fetchDeletedPasswords(currEmail);
+      }, 800);
     } else {
-      document.getElementById("pin-error").textContent =
-        "Incorrect PIN. Access denied.";
-      document.getElementById("pin-error").classList.remove("hidden");
+      pinStatus.textContent = "❌ Incorrect PIN. Try again.";
+      pinStatus.className = "pin-status error";
     }
-  };
+  });
 
-  // ✅ Now safe to remove and attach listener
-  window.electron.removeAllListeners("verify-pin-response", handlePinResponse);
-  window.electron.on("verify-pin-response", handlePinResponse);
-
-  // ✅ Send IPC
   window.electron.send("verify-pin", { email: currEmail, pin });
 }
 

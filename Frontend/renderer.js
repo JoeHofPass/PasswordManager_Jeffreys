@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordPopup = document.getElementById("passwordPopup");
     const accounts = document.getElementById("accountList");
     const deletePassword = document.getElementById("delete-confirmation");
-    const pinCheck = document.getElementById("pin-form");
+    const pinForm = document.getElementById("pin-form");
     const restorePassword = document.getElementById("restore-confirmation");
     const fileBtn = document.getElementById("selectFile");
     const fileInput = document.getElementById("fileInput");
+    const pinStatus = document.getElementById("pin-status");
 
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
@@ -38,34 +39,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (pinCheck) {
-        document.getElementById("verifypinbtn").addEventListener("click", (event) => {
-            event.preventDefault();
-            const current = localStorage.getItem("currentUserEmail");
-            const pin = document.getElementById("pin-input").value;
-
-            if (!window.electron) {
-                console.error("Electron API not found!");
-                return;
-            }
-            window.electron.send("verify-pin", { email: current, pin });
-
+    if (pinForm) {
+        pinForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const pin = document.getElementById("pin-input").value.trim();
+          const email = localStorage.getItem("currentUserEmail");
+    
+          pinStatus.className = "pin-status hidden";
+          pinStatus.textContent = "";
+    
+          if (!pin) {
+            pinStatus.textContent = "Please enter a PIN.";
+            pinStatus.className = "pin-status error";
+            pinStatus.classList.remove("hidden");
+            return;
+          }
+    
+          window.electron.send("verify-pin", { email, pin });
         });
+    
         window.electron.removeAllListeners("verify-pin-response");
         window.electron.on("verify-pin-response", (response) => {
-            if (response.status === "success") {
-                console.log("pin successful!");
-                if (currentAction === "access-deleted") {
-                    window.location.href = "deletedPasswords.html";
-                  } else if (currentAction === "edit") {
-                    openEditWindow(currentPasswordId);
-                  }
-                  closePinModal();
-            } else {
-                console.log("pin failed!");
-            }
+          pinStatus.classList.remove("hidden");
+          if (response.status === "success") {
+            pinStatus.className = "pin-status success";
+            pinStatus.textContent = "✅ Access granted!";
+            setTimeout(() => {
+              document.getElementById("pin-modal").classList.add("hidden");
+              pinStatus.classList.add("hidden");
+              pinStatus.textContent = "";
+              switch (window.currentAction) {
+                case "access-deleted":
+                  window.location.href = "deletedPasswords.html";
+                  break;
+                case "edit":
+                  window.openEditWindow(localStorage.getItem("currentPasswordId"));
+                  break;
+                case "delete":
+                  window.deletePasswordConfirmed();
+                  break;
+                case "unlock":
+                  document.body.classList.remove("locked");
+                  break;
+              }
+              window.currentAction = null;
+            }, 800);
+            closePinModal();
+          } else {
+            pinStatus.className = "pin-status error";
+            pinStatus.textContent = "❌ Incorrect PIN. Try again.";
+          }
         });
-    }
+      }
 
     if (registerForm) {
         registerForm.addEventListener("submit", (event) => {
@@ -127,11 +152,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response === "success") {
                 console.log("Password successfully stored!");
                 closePasswordPopup();
+                localStorage.removeItem("currentPasswordId");
             } else {
                 console.log("Failed to add new password.");
             }
         });
     }
+
     if (deletePassword) {
         document.getElementById("deletepassbtn").addEventListener("click", (event) => {
                 event.preventDefault();
