@@ -83,9 +83,43 @@
         <input type="email" id="userEmail" required />
         <label>Password:</label>
         <input type="text" id="generatedPassword" />
+        <div class="password-options">
+          <label>Password Length: <span id="lengthValue">16</span></label>
+          <input
+            type="range"
+            id="passwordLength"
+            min="8"
+            max="64"
+            value="16"
+            oninput="document.getElementById('lengthValue').innerText = this.value"
+          />
+        </div>
+
         <button class="btn-generate" onclick="generatePassword()">
           Generate Password
         </button>
+
+        <div
+          id="strengthBarContainer"
+          style="width: 100%; margin-top: 10px; display: none"
+        >
+          <div
+            id="strengthBar"
+            style="
+              height: 8px;
+              width: 100%;
+              background-color: lightgray;
+              border-radius: 5px;
+              overflow: hidden;
+            "
+          >
+            <div
+              id="strengthFill"
+              style="height: 100%; width: 0; background-color: red"
+            ></div>
+          </div>
+          <p id="strengthText" style="margin-top: 5px; font-size: 12px"></p>
+        </div>
         <button id="savepassbtn" class="btn-save" onclick="saveNewPassword()">
           Save New Password
         </button>
