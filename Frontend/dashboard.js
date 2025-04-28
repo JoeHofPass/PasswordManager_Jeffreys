@@ -166,7 +166,7 @@ function saveNewPassword() {
       <h4>${siteName}</h4>
       <p>${userEmail}</p>
       <img src="${logoURL}" title="Click to visit the website" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-      <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+      <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
       <div class="password-actions">
         <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
           <i class="fas fa-eye"></i>
@@ -179,6 +179,8 @@ function saveNewPassword() {
         </button>
       </div>
     `;
+    const passwordField = newAccount.querySelector(".password-field");
+    passwordField.dataset.realPassword = password.password;
 
     const logo = newAccount.querySelector(".site-logo");
     logo.addEventListener("click", () => {
