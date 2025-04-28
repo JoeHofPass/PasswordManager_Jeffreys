@@ -59,21 +59,49 @@
             <div id="password-match" class="password-match"></div>
           </div>
           <div class="form-group">
-            <label for="pin">Pin</label>
+            <label for="pin">Pin (6 digits)</label>
             <input
-              type="pin"
+              type="text"
               id="pin"
               name="pin"
-              placeholder="Pin"
+              placeholder="Enter 6-digit PIN"
               pattern="\d{6}"
+              maxlength="6"
               required
-              title="Please set a 6 digit pin."
+              title="PIN must be exactly 6 digits"
+              oninput="enforcePinLength(this)"
             />
           </div>
-          <div class="form-group">
-            <input type="checkbox" id="terms" required />
-            <label for="terms">I agree to the Terms and Conditions</label>
+
+          <div
+            class="form-group"
+            style="display: flex; align-items: center; gap: 10px"
+          >
+            <input
+              type="checkbox"
+              id="terms"
+              required
+              style="width: 20px; height: 20px; accent-color: #00bfff"
+            />
+            <label for="terms" style="margin: 0; font-size: 0.95em">
+              I agree to the
+              <a
+                href="#"
+                onclick="openTerms(event)"
+                style="color: #00bfff; text-decoration: underline"
+              >
+                Terms and Conditions
+              </a>
+            </label>
           </div>
+
+          <script>
+            function openTerms(event) {
+              event.preventDefault();
+              window.location.href = "terms.html";
+            }
+          </script>
+
           <button type="submit" name="register" class="btn">Register</button>
         </form>
         <div class="link">
@@ -81,6 +109,7 @@
         </div>
       </div>
     </section>
+
     <script>
       function checkStrength() {
         const password = document.getElementById("password").value;
@@ -92,7 +121,6 @@
         if (/[0-9]/.test(password)) strength += 25;
         if (/[^A-Za-z0-9]/.test(password)) strength += 25;
 
-        // Update strength bar width and color
         strengthBar.style.width = strength + "%";
         strengthBar.style.backgroundColor =
           strength < 50 ? "#e74c3c" : strength < 75 ? "#f1c40f" : "#2ecc71";
@@ -119,8 +147,14 @@
           passwordMatch.style.display = "block";
         }
       }
+
+      function enforcePinLength(input) {
+        input.value = input.value.replace(/[^0-9]/g, "").slice(0, 6);
+      }
     </script>
+
     <script src="renderer.js"></script>
+
     <div id="loading-overlay" class="loading-overlay hidden">
       <div class="spinner"></div>
     </div>

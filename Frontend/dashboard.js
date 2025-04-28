@@ -38,7 +38,8 @@ function checkPasswordStrength(password) {
     "Very Strong",
   ];
 
-  document.getElementById("strengthText").innerText = strengthText[strength - 1] || "Too Short";
+  document.getElementById("strengthText").innerText =
+    strengthText[strength - 1] || "Too Short";
 }
 
 function togglePasswordVisibility(passwordElement, toggleButton) {
@@ -54,9 +55,9 @@ function togglePasswordVisibility(passwordElement, toggleButton) {
 }
 
 function saveNewPassword() {
-  const siteName = document.getElementById("siteName").value;
-  const userEmail = document.getElementById("userEmail").value;
-  const password = document.getElementById("generatedPassword").value;
+  const siteName = document.getElementById("siteName").value.trim();
+  const userEmail = document.getElementById("userEmail").value.trim();
+  const password = document.getElementById("generatedPassword").value.trim();
 
   if (!siteName || !userEmail || !password) {
     alert("All fields are required!");
@@ -68,21 +69,26 @@ function saveNewPassword() {
     domain += ".com";
   }
   const logoURL = `https://logo.clearbit.com/${domain}`;
-  // const id = crypto.randomUUID();
-  // localStorage.setItem("currentPasswordId", id);
+
   let id = localStorage.getItem("currentPasswordId");
   if (!id) {
     id = crypto.randomUUID();
     localStorage.setItem("currentPasswordId", id);
   }
+
   const accountList = document.getElementById("accountList");
-  let existingPassword = document.querySelector(`.password-box[data-id="${id}"]`);
+  let existingPassword = document.querySelector(
+    `.password-box[data-id="${id}"]`
+  );
+
   if (existingPassword) {
     existingPassword.querySelector("h4").innerText = siteName;
     existingPassword.querySelector("p").innerText = userEmail;
     existingPassword.querySelector(".site-logo").src = logoURL;
-    existingPassword.querySelector(".password-field").dataset.realPassword = password;
-    existingPassword.querySelector(".password-field").textContent = "••••••••••••";
+    existingPassword.querySelector(".password-field").dataset.realPassword =
+      password;
+    existingPassword.querySelector(".password-field").textContent =
+      "••••••••••••";
     existingPassword.querySelector(".password-field").dataset.visible = "false";
   } else {
     const newAccount = document.createElement("div");
@@ -91,28 +97,52 @@ function saveNewPassword() {
     newAccount.style.position = "relative";
 
     newAccount.innerHTML = `
-    <div class="icon-row">
-      <i class="fas fa-pencil-alt edit-icon" title="Edit password" onclick="promptPin('edit', '${id}')"></i>
-      <i class="fas fa-trash-alt delete-icon" title="Delete password" onclick="confirmDelete('${id}')"></i>
-    </div>
-    <h4>${siteName}</h4>
-    <p>${userEmail}</p>
-    <img src="${logoURL}" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-    <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
-    <div class="password-actions">
-      <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
-        <i class="fas fa-eye"></i>
-      </button>
-      <button class="copy-password" onclick="copyPassword(this)" title="Copy password">
-        <i class="fas fa-copy"></i>
-      </button>
-    </div>
+      <div class="icon-row">
+        <i class="fas fa-pencil-alt edit-icon" title="Edit password" onclick="promptPin('edit', '${id}')"></i>
+        <i class="fas fa-trash-alt delete-icon" title="Delete password" onclick="confirmDelete('${id}')"></i>
+      </div>
+      <h4>${siteName}</h4>
+      <p>${userEmail}</p>
+      <img src="${logoURL}" title="Click to visit the website" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
+      <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+      <div class="password-actions">
+        <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="copy-password" onclick="copyPassword(this)" title="Copy Password">
+          <i class="fas fa-copy"></i>
+        </button>
+        <button class="copy-username" onclick="copyUsername(this)" title="Copy Username">
+          <i class="fas fa-user"></i>
+        </button>
+      </div>
     `;
-    const passwordField = newAccount.querySelector(".password-field");
-    passwordField.dataset.realPassword = password;
+
+    const logo = newAccount.querySelector(".site-logo");
+    logo.addEventListener("click", () => {
+      const fullURL = `https://${domain}`;
+      if (window.electron && window.electron.openExternal) {
+        window.electron.openExternal(fullURL);
+      } else {
+        window.open(fullURL, "_blank");
+      }
+    });
+
     accountList.appendChild(newAccount);
   }
+
   closePasswordPopup();
+}
+
+function copyUsername(button) {
+  const usernameElement = button.closest(".password-box")?.querySelector("p");
+  if (!usernameElement) return;
+
+  const username = usernameElement.innerText.trim();
+  navigator.clipboard.writeText(username).then(() => {
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => (button.innerHTML = '<i class="fas fa-user"></i>'), 1500);
+  });
 }
 
 function copyPassword(button) {
@@ -223,7 +253,9 @@ function confirmDelete(id) {
 function deletePasswordConfirmed() {
   const id = localStorage.getItem("currentPasswordId");
   const card = document.querySelector(`.password-box[data-id="${id}"]`);
-  if (card) { card.remove(); }
+  if (card) {
+    card.remove();
+  }
   closeDeleteModal();
   localStorage.removeItem("currentPasswordId");
 }
@@ -243,7 +275,8 @@ function openEditWindow(id) {
 
   const siteName = card.querySelector("h4")?.innerText || "";
   const userEmail = card.querySelector("p")?.innerText || "";
-  const password = card.querySelector(".password-field")?.dataset.realPassword || "";
+  const password =
+    card.querySelector(".password-field")?.dataset.realPassword || "";
 
   document.getElementById("siteName").value = siteName;
   document.getElementById("userEmail").value = userEmail;

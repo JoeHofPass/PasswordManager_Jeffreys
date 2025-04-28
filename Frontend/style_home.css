@@ -5,7 +5,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: "Share Tech Mono", monospace;
+  font-family: "Orbitron", sans-serif;
   background: radial-gradient(ellipse at bottom, #080c10 0%, #000000 100%);
   color: #00ffe1;
   width: 100%;
@@ -113,7 +113,7 @@ header {
 }
 
 .header-title {
-  font-family: "VT323", monospace;
+  font-family: "Orbitron", sans-serif;
   font-size: 2.6em;
   color: #00ffe1;
   text-shadow: 0 0 6px #00ffe1;
@@ -290,11 +290,16 @@ input:checked + .slider:before {
 
 /* ===== SITE LOGO & PASSWORDS ===== */
 .site-logo {
-  width: 42px;
-  height: 42px;
-  background: #fff;
-  border-radius: 6px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.site-logo:hover {
+  transform: scale(1.1) rotate(2deg);
+  filter: drop-shadow(0 0 8px #00bfff);
 }
 
 .password-field {
@@ -843,5 +848,46 @@ body.light .btn-add {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.copy-username {
+  background: transparent;
+  border: none;
+  color: #00ffae;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.copy-username:hover {
+  color: #00ffaa;
+  transform: scale(1.2);
+}
+
+.password-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #00bfff;
+  font-size: 1.2em;
+  z-index: 100;
+}
+
+.password-loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #00bfff;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  margin: 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
