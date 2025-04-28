@@ -1,10 +1,61 @@
 {
+  "name": "gatekeep",
+  "productName": "GateKeep",
+  "version": "1.0.0",
+  "description": "GateKeep Password Manager",
+  "author": "Jailhouse Lock",
+  "main": "./Frontend/main.js",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./gatekeep4_ico.ico",
+        "extraResource": [
+          "build/Release/addon.node",
+          "Frontend"
+        ]
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "setupIcon": "./gatekeep4_ico.ico",
+            "shortcutName": "GateKeep",
+            "name": "GateKeep"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip"
+        }
+      ]
+    }
+  },
   "scripts": {
+<<<<<<< Updated upstream
     "start": "cd frontend && npx electron/rebuild && cd .. && node-gyp configure && node-gyp build && cd frontend && npm start",
+=======
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+>>>>>>> Stashed changes
     "postinstall": "copy \"C:\\Program Files\\PostgreSQL\\17\\bin\\libpq.dll\" .\\build\\Release\\ && copy \"C:\\Program Files\\libsodium\\bin\\libsodium.dll\" .\\build\\Release\\"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "nan": "^2.22.2",
     "node-addon-api": "^8.3.1"
+<<<<<<< Updated upstream
+=======
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.8.0",
+    "@electron-forge/maker-deb": "^7.8.0",
+    "@electron-forge/maker-rpm": "^7.8.0",
+    "@electron-forge/maker-squirrel": "^7.8.0",
+    "@electron-forge/maker-zip": "^7.8.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.0",
+    "@electron-forge/plugin-fuses": "^7.8.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^35.2.1"
+>>>>>>> Stashed changes
   }
 }

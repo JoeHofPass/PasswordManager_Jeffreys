@@ -1,3 +1,5 @@
+// FINAL CLEANED dashboard.js
+
 function openPasswordPopup() {
   document.getElementById("passwordPopup").style.display = "block";
 }
@@ -8,6 +10,10 @@ function closePasswordPopup() {
 
 function logout() {
   localStorage.removeItem("currentUserEmail");
+<<<<<<< Updated upstream
+=======
+  window.location.href = "login.html";
+>>>>>>> Stashed changes
 }
 
 function generatePassword() {
@@ -18,12 +24,21 @@ function generatePassword() {
   for (let i = 0; i < length; i++) {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+<<<<<<< Updated upstream
   document.getElementById("generatedPassword").value = password;
   //checkPasswordStrength(password);
+=======
+  const generated = document.getElementById("generatedPassword");
+  generated.value = password;
+  checkPasswordStrength(password);
+>>>>>>> Stashed changes
 }
 
 function checkPasswordStrength(password) {
   const strengthBar = document.getElementById("strengthBar");
+  const strengthLabel = document.getElementById("strengthText");
+  if (!strengthBar || !strengthLabel) return;
+
   let strength = 0;
   if (password.length >= 8) strength++;
   if (/[A-Z]/.test(password)) strength++;
@@ -39,10 +54,10 @@ function checkPasswordStrength(password) {
     "Strong",
     "Very Strong",
   ];
-  document.getElementById("strengthText").innerText =
-    strengthText[strength - 1];
+  strengthLabel.innerText = strengthText[strength - 1] || "Too Short";
 }
 
+<<<<<<< Updated upstream
 function togglePassword(button) {
   const passwordField = button.previousElementSibling;
   if (passwordField.type === "password") {
@@ -104,10 +119,46 @@ function clearInputFields() {
   document.getElementById("strengthBar").value = 0;
   document.getElementById("strengthText").innerText = "";
   }
+=======
+function togglePasswordVisibility(passwordElement, toggleButton) {
+  if (!passwordElement) return;
+  const isVisible = passwordElement.dataset.visible === "true";
+  passwordElement.textContent = isVisible
+    ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+    : passwordElement.dataset.realPassword;
+  passwordElement.dataset.visible = !isVisible;
+  toggleButton.innerHTML = isVisible
+    ? '<i class="fas fa-eye"></i>'
+    : '<i class="fas fa-eye-slash"></i>';
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function copyPassword(button) {
+  const passwordElement = button
+    .closest(".password-box")
+    ?.querySelector(".password-field");
+  if (!passwordElement) return;
+
+  const password = passwordElement.dataset.realPassword;
+  navigator.clipboard.writeText(password).then(() => {
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => (button.innerHTML = '<i class="fas fa-copy"></i>'), 1500);
+  });
+}
+
+function clearInputFields() {
+  document.getElementById("siteName").value = "";
+  document.getElementById("userEmail").value = "";
+  document.getElementById("generatedPassword").value = "";
+  const bar = document.getElementById("strengthBar");
+  const label = document.getElementById("strengthText");
+  if (bar) bar.value = 0;
+  if (label) label.innerText = "";
+>>>>>>> Stashed changes
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   const searchBar = document.getElementById("searchBar");
+<<<<<<< Updated upstream
 
   searchBar.addEventListener("input", function () {
     let filter = searchBar.value.toLowerCase();
@@ -139,3 +190,86 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 });
+=======
+  if (searchBar) {
+    searchBar.addEventListener("input", () => {
+      const filter = searchBar.value.toLowerCase();
+      document.querySelectorAll(".password-box").forEach((card) => {
+        const siteName = card.querySelector("h4").innerText.toLowerCase();
+        const userEmail = card.querySelector("p").innerText.toLowerCase();
+        card.style.display =
+          siteName.includes(filter) || userEmail.includes(filter)
+            ? "block"
+            : "none";
+      });
+    });
+  }
+
+  const passwordInput = document.getElementById("generatedPassword");
+  passwordInput?.addEventListener("input", (e) =>
+    checkPasswordStrength(e.target.value)
+  );
+});
+
+let inactivityTimer;
+let currentAction = null;
+
+function promptPin(action, id) {
+  window.currentAction = action;
+  if (id) {
+    localStorage.setItem("currentPasswordId", id);
+  }
+
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  const pinStatus = document.getElementById("pin-status");
+  pinStatus?.classList.add("hidden");
+  pinStatus.textContent = "";
+
+  cancelButton.textContent = action === "unlock" ? "Logout" : "Cancel";
+  cancelButton.onclick = action === "unlock" ? logout : closePinModal;
+
+  document.getElementById("pin-modal").classList.remove("hidden");
+}
+
+function closePinModal() {
+  document.getElementById("pin-modal").classList.add("hidden");
+  document.getElementById("pin-input").value = "";
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+  currentAction = null;
+}
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => promptPin("unlock", null), 60000);
+}
+
+["click", "mousemove", "keypress"].forEach((evt) =>
+  document.addEventListener(evt, resetInactivityTimer)
+);
+
+resetInactivityTimer();
+
+function requestPinToAccessDeleted() {
+  currentAction = "access-deleted";
+  document.body.classList.add("locked");
+  const cancelButton = document.getElementById("cancel-pin-btn");
+  cancelButton.textContent = "Cancel";
+  cancelButton.onclick = closePinModal;
+
+  const pinStatus = document.getElementById("pin-status");
+  pinStatus.classList.add("hidden");
+  pinStatus.textContent = "";
+
+  document.getElementById("pin-modal").classList.remove("hidden");
+}
+
+function cancelPin() {
+  if (currentAction === "unlock") {
+    alert("You must verify your PIN to continue using GateKeep.");
+    return;
+  }
+  closePinModal();
+}
+>>>>>>> Stashed changes
