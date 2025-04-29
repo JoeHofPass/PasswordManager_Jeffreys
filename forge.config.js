@@ -1,53 +1,45 @@
-const { FusesPlugin } = require("@electron-forge/plugin-fuses");
-const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-const path = require("path");
+const { FusesPlugin } = require('@electron-forge/plugin-fuses');
+const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
   packagerConfig: {
-    asar: {
-      unpack: "build/Release/**", // still unpack addon.node from asar
-    },
-    icon: path.resolve(__dirname, "gatekeep4_ico"),
-    extraResource: [
-      {
-        from: "build/Release",
-        to: "build/Release",
-        filter: ["**/*"],
-      },
-      {
-        from: "Frontend",
-        to: "Frontend",
-        filter: ["**/*"],
-      },
-    ],
+    asar: true,
+    icon: process.platform === 'darwin'
+      ? 'gatekeep4_mac' : 'gatekeep4_win',
+    overwrite: true,
   },
   rebuildConfig: {},
   makers: [
     {
-      name: "@electron-forge/maker-squirrel",
-      config: {
-        setupIcon: path.resolve(__dirname, "gatekeep4_ico.ico"),
-        shortcutName: "GateKeep",
-        name: "GateKeep",
-      },
-    },
-    {
-      name: "@electron-forge/maker-zip",
-    },
-    {
-      name: "@electron-forge/maker-deb",
+      name: '@electron-forge/maker-squirrel',
       config: {},
     },
     {
-      name: "@electron-forge/maker-rpm",
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin'],
+    },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        format: 'ULFO',
+      },
+    },
+    {
+      name: '@electron-forge/maker-deb',
+      config: {},
+    },
+    {
+      name: '@electron-forge/maker-rpm',
       config: {},
     },
   ],
   plugins: [
     {
-      name: "@electron-forge/plugin-auto-unpack-natives",
+      name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
     },
+    // Fuses are used to enable/disable various Electron functionality
+    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,

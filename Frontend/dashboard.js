@@ -8,47 +8,137 @@ function closePasswordPopup() {
 }
 
 function generatePassword() {
-  const length = 16;
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-  let password = "";
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  const length =
+    parseInt(document.getElementById("passwordLength").value) || 16;
+
+  if (length < 8) {
+    alert("Password length must be at least 8 characters for strong security.");
+    return;
   }
-  document.getElementById("generatedPassword").value = password;
-  checkPasswordStrength(password);
+
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+  const allChars = uppercase + lowercase + numbers + symbols;
+
+  let passwordChars = [];
+
+  // ✅ Ensure at least one character from each type
+  passwordChars.push(uppercase.charAt(cryptoRandom(uppercase.length)));
+  passwordChars.push(lowercase.charAt(cryptoRandom(lowercase.length)));
+  passwordChars.push(numbers.charAt(cryptoRandom(numbers.length)));
+  passwordChars.push(symbols.charAt(cryptoRandom(symbols.length)));
+
+  // ✅ Fill the rest randomly
+  const remainingLength = length - 4;
+  const randomValues = new Uint32Array(remainingLength);
+  window.crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < remainingLength; i++) {
+    const randomIndex = randomValues[i] % allChars.length;
+    passwordChars.push(allChars.charAt(randomIndex));
+  }
+
+  // ✅ Shuffle the characters
+  passwordChars = shuffleArray(passwordChars);
+
+  const finalPassword = passwordChars.join("");
+
+  const passwordInput = document.getElementById("generatedPassword");
+  passwordInput.value = finalPassword;
+  passwordInput.setAttribute("data-real-password", finalPassword); // ✅ FIX: set dataset!
+
+  checkPasswordStrength(finalPassword);
+
+  if (typeof triggerPasswordAnimation === "function") {
+    triggerPasswordAnimation(); // Optional if you are using animation
+  }
+}
+
+function cryptoRandom(max) {
+  const array = new Uint32Array(1);
+  window.crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = cryptoRandom(i + 1);
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
 
 function checkPasswordStrength(password) {
-  const strengthBar = document.getElementById("strengthBar");
-  if (!strengthBar) return;
+  const strengthContainer = document.getElementById("strengthBarContainer");
+  const strengthBar = document.getElementById("strengthFill");
+  const strengthText = document.getElementById("strengthText");
+
+  if (!strengthContainer || !strengthBar || !strengthText) return;
+
+  if (password.length === 0) {
+    strengthContainer.style.display = "none";
+    return;
+  }
+
+  strengthContainer.style.display = "block";
+
   let strength = 0;
   if (password.length >= 8) strength++;
   if (/[A-Z]/.test(password)) strength++;
-  if (/[a-z]/.test(password)) strength++;
   if (/[0-9]/.test(password)) strength++;
   if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-  strengthBar.value = strength;
-  const strengthText = [
-    "Very Weak",
-    "Weak",
-    "Moderate",
-    "Strong",
-    "Very Strong",
-  ];
+  let strengthColor = "red";
+  let strengthMessage = "Weak";
 
-  document.getElementById("strengthText").innerText =
-    strengthText[strength - 1] || "Too Short";
+  if (strength < 3) {
+    strengthColor = "red";
+    strengthMessage = "Weak";
+  }
+  if (strength >= 3) {
+    strengthColor = "orange";
+    strengthMessage = "Moderate";
+  }
+  if (strength === 4) {
+    strengthColor = "green";
+    strengthMessage = "Strong";
+  }
+
+  strengthBar.style.width = `${(strength / 4) * 100}%`;
+  strengthBar.style.backgroundColor = strengthColor;
+  strengthText.textContent = `Password Strength: ${strengthMessage}`;
 }
+let pinVerifiedForReveal = false;
+let passwordElementToReveal = null;
+let toggleButtonToReveal = null;
 
 function togglePasswordVisibility(passwordElement, toggleButton) {
   if (!passwordElement) return;
+
+  if (!pinVerifiedForReveal) {
+    window.currentAction = "reveal";
+    window.passwordElementToReveal = passwordElement;
+    window.toggleButtonToReveal = toggleButton;
+    promptPin("reveal");
+    return;
+  }
+
+  revealPassword(passwordElement, toggleButton);
+}
+
+function refreshPasswords() {
+  const current = localStorage.getItem("currentUserEmail");
+  window.electron.send("get-passwords", { email: current });
+}
+
+function revealPassword(passwordElement, toggleButton) {
   const isVisible = passwordElement.dataset.visible === "true";
   passwordElement.textContent = isVisible
     ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
     : passwordElement.dataset.realPassword;
-  passwordElement.dataset.visible = !isVisible;
+  passwordElement.dataset.visible = (!isVisible).toString();
   toggleButton.innerHTML = isVisible
     ? '<i class="fas fa-eye"></i>'
     : '<i class="fas fa-eye-slash"></i>';
@@ -104,7 +194,7 @@ function saveNewPassword() {
       <h4>${siteName}</h4>
       <p>${userEmail}</p>
       <img src="${logoURL}" title="Click to visit the website" class="site-logo" onerror="this.onerror=null;this.src='onErrorIcon.png';" />
-      <p class="password-field" data-real-password="${password}" data-visible="false">••••••••••••</p>
+      <p class="password-field" data-real-password="" data-visible="false">••••••••••••</p>
       <div class="password-actions">
         <button class="toggle-password" onclick="togglePasswordVisibility(this.parentElement.previousElementSibling, this)">
           <i class="fas fa-eye"></i>
@@ -117,6 +207,8 @@ function saveNewPassword() {
         </button>
       </div>
     `;
+    const passwordField = newAccount.querySelector(".password-field");
+    passwordField.dataset.realPassword = password.password;
 
     const logo = newAccount.querySelector(".site-logo");
     logo.addEventListener("click", () => {
@@ -292,6 +384,7 @@ function openEditWindow(id) {
 function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
+    pinVerifiedForReveal = false; // <-- Reset PIN verification for reveal after inactivity
     promptPin("unlock", null);
   }, 60000);
 }

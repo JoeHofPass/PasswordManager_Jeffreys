@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileBtn = document.getElementById("selectFile");
   const fileInput = document.getElementById("fileInput");
   const pinStatus = document.getElementById("pin-status");
+  const exportBtn = document.getElementById("exportFile");
 
   function showToast(message, autoClose = false, callback = null) {
     let toast = document.createElement("div");
@@ -146,6 +147,20 @@ document.addEventListener("DOMContentLoaded", () => {
             case "unlock":
               document.body.classList.remove("locked");
               break;
+            case "reveal":
+              pinVerifiedForReveal = true;
+              if (
+                window.passwordElementToReveal &&
+                window.toggleButtonToReveal
+              ) {
+                togglePasswordVisibility(
+                  window.passwordElementToReveal,
+                  window.toggleButtonToReveal
+                );
+                window.passwordElementToReveal = null;
+                window.toggleButtonToReveal = null;
+              }
+              break;
           }
           window.currentAction = null;
         }, 800);
@@ -187,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Password successfully stored!");
         closePasswordPopup();
         localStorage.removeItem("currentPasswordId");
+        refreshPasswords(); // ✅ Reload passwords from database
       } else {
         console.log("Failed to add new password.");
       }
@@ -260,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.electron.removeAllListeners("get-passwords-response");
     window.electron.on("get-passwords-response", (passwords) => {
       const accountList = document.getElementById("accountList");
+      accountList.innerHTML = ""; //
       passwords.forEach((password) => {
         let domain = password.service.toLowerCase().replace(/\s+/g, "");
         if (!domain.includes(".")) {
@@ -329,7 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
             service:
               entry.service || entry.website || entry.url || "Not provided",
             username: entry.username || entry.email || "Not provided",
-            password: entry.password || entry.pass,
+            password: entry.password || entry.pass || "Not provided",
+            password_id: crypto.randomUUID(),
           }));
           let importSuccess = 0;
           let importFail = 0;
@@ -339,6 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
               serviceName: entry.service,
               serviceUsername: entry.username,
               servicePassword: entry.password,
+              password_id: entry.password_id,
             });
             window.electron.once("storePassword-response", (response) => {
               if (response === "success") {
@@ -359,5 +378,45 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
     });
+  }
+
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      const current = localStorage.getItem("currentUserEmail");
+      window.electron.send("get-passwords", { email: current });
+      window.electron.on("get-passwords-response", (response) => {
+        if (!response || response.length === 0) {
+          alert("No passwords to export.");
+          return;
+        }
+        try {
+          const csvData = Papa.unparse(
+            response.map((password) => ({
+              service: password.service,
+              username: password.username,
+              password: password.password,
+            }))
+          );
+          const blob = new Blob([csvData], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "GateKeep_passwords.csv";
+          a.click();
+        } catch (error) {
+          console.error("Error parsing passwords:", error);
+          alert("Failed to export passwords. Please try again.");
+        }
+      });
+    });
+  }
+});
+
+document.body.addEventListener("click", (e) => {
+  const anchor = e.target.closest("a.external-link");
+  if (anchor) {
+    e.preventDefault();
+    const targetUrl = anchor.getAttribute("data-href");
+    window.open(targetUrl, "_blank");
   }
 });
