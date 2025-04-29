@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const pinStatus = document.getElementById("pin-status");
   const exportBtn = document.getElementById("exportFile");
 
-
   function showToast(message, autoClose = false, callback = null) {
     let toast = document.createElement("div");
     toast.className = "toast-message";
@@ -148,6 +147,20 @@ document.addEventListener("DOMContentLoaded", () => {
             case "unlock":
               document.body.classList.remove("locked");
               break;
+            case "reveal":
+              pinVerifiedForReveal = true;
+              if (
+                window.passwordElementToReveal &&
+                window.toggleButtonToReveal
+              ) {
+                togglePasswordVisibility(
+                  window.passwordElementToReveal,
+                  window.toggleButtonToReveal
+                );
+                window.passwordElementToReveal = null;
+                window.toggleButtonToReveal = null;
+              }
+              break;
           }
           window.currentAction = null;
         }, 800);
@@ -159,60 +172,66 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-    if (passwordPopup) {
-        document.getElementById("savepassbtn").addEventListener("click", (event) => {
-            event.preventDefault();
-            const email = localStorage.getItem("currentUserEmail");
-            const serviceName = document.getElementById("siteName").value;
-            const serviceUsername = document.getElementById("userEmail").value;
-            const servicePassword = document.getElementById("generatedPassword").value;
-            const password_id = localStorage.getItem("currentPasswordId");
+  if (passwordPopup) {
+    document
+      .getElementById("savepassbtn")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        const email = localStorage.getItem("currentUserEmail");
+        const serviceName = document.getElementById("siteName").value;
+        const serviceUsername = document.getElementById("userEmail").value;
+        const servicePassword =
+          document.getElementById("generatedPassword").value;
+        const password_id = localStorage.getItem("currentPasswordId");
 
-            if (!window.electron) {
-                console.error("Electron API not found!");
-                return;
-            }
-            window.electron.send("store-password", {
-                email,
-                serviceName,
-                serviceUsername,
-                servicePassword,
-                password_id
-            });
+        if (!window.electron) {
+          console.error("Electron API not found!");
+          return;
+        }
+        window.electron.send("store-password", {
+          email,
+          serviceName,
+          serviceUsername,
+          servicePassword,
+          password_id,
         });
-        window.electron.removeAllListeners("storePassword-response");
-        window.electron.on("storePassword-response", (response) => {
-            if (response === "success") {
-                console.log("Password successfully stored!");
-                closePasswordPopup();
-                localStorage.removeItem("currentPasswordId");
-            } else {
-                console.log("Failed to add new password.");
-            }
-        });
-    }
+      });
+    window.electron.removeAllListeners("storePassword-response");
+    window.electron.on("storePassword-response", (response) => {
+      if (response === "success") {
+        console.log("Password successfully stored!");
+        closePasswordPopup();
+        localStorage.removeItem("currentPasswordId");
+        refreshPasswords(); // ✅ Reload passwords from database
+      } else {
+        console.log("Failed to add new password.");
+      }
+    });
+  }
 
-    if (deletePassword) {
-        document.getElementById("deletepassbtn").addEventListener("click", (event) => {
-            event.preventDefault();
-            const email = localStorage.getItem("currentUserEmail");
-            const password_id = localStorage.getItem("currentPasswordId");
-            const zeroORone = "0";
+  if (deletePassword) {
+    document
+      .getElementById("deletepassbtn")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        const email = localStorage.getItem("currentUserEmail");
+        const password_id = localStorage.getItem("currentPasswordId");
+        const zeroORone = "0";
 
-            if (!window.electron) {
-                console.error("Electron API not found!");
-                return;
-            }
-            window.electron.send("restoreORdelete", {
-                email,
-                password_id,
-                zeroORone
-            });
-            //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
+        if (!window.electron) {
+          console.error("Electron API not found!");
+          return;
+        }
+        window.electron.send("restoreORdelete", {
+          email,
+          password_id,
+          zeroORone,
         });
-        window.electron.removeAllListeners("restoreORdelete-response");
-        window.electron.on("restoreORdelete-response", (response) => {
-            //console.log("restoreORdelete-response:", response);
+        //console.log(typeof(email),typeof(serviceName),typeof(zeroORone));
+      });
+    window.electron.removeAllListeners("restoreORdelete-response");
+    window.electron.on("restoreORdelete-response", (response) => {
+      //console.log("restoreORdelete-response:", response);
 
       if (response === "success") {
         deletePasswordConfirmed();
@@ -257,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.electron.removeAllListeners("get-passwords-response");
     window.electron.on("get-passwords-response", (passwords) => {
       const accountList = document.getElementById("accountList");
+      accountList.innerHTML = ""; //
       passwords.forEach((password) => {
         let domain = password.service.toLowerCase().replace(/\s+/g, "");
         if (!domain.includes(".")) {
@@ -317,73 +337,86 @@ document.addEventListener("DOMContentLoaded", () => {
       const file = event.target.files[0];
       if (!file) return;
 
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function (results) {
-                    const email = localStorage.getItem("currentUserEmail");
-                    const entries = results.data.map(entry => ({
-                        service: entry.service || entry.website || entry.url || "Not provided",
-                        username: entry.username || entry.email || "Not provided",
-                        password: entry.password || entry.pass || "Not provided",
-                        password_id : crypto.randomUUID()
-                    }));
-                    let importSuccess = 0;
-                    let importFail = 0;
-                    entries.forEach(entry => {
-                        window.electron.send("store-password", { email, serviceName: entry.service, serviceUsername: entry.username, servicePassword: entry.password, password_id: entry.password_id });
-                        window.electron.once("storePassword-response", (response) => {
-                            if (response === "success") {
-                                importSuccess++;
-                            } else {
-                                importFail++;
-                            }
-                            if (importSuccess + importFail === entries.length) {
-                                alert(importSuccess + " password(s) were successfully imported.");
-                                console.log(`${importSuccess} passwords imported, ${importFail} failed to import.`);
-                            }
-                        });
-                    });
-                }
-            })
-        });
-    }
-
-    if(exportBtn) {
-        exportBtn.addEventListener("click", () =>  {
-            const current = localStorage.getItem("currentUserEmail");
-            window.electron.send("get-passwords", { email: current });
-            window.electron.on("get-passwords-response", (response) => {
-                if(!response || response.length === 0) {
-                    alert("No passwords to export.");
-                    return;
-                }
-                try{
-                    const csvData = Papa.unparse(response.map(password => ({
-                        service: password.service,
-                        username: password.username,
-                        password: password.password
-                    })));
-                    const blob = new Blob([csvData], { type: 'text/csv' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "GateKeep_passwords.csv";
-                    a.click();
-                } catch (error) {
-                    console.error("Error parsing passwords:", error);
-                    alert("Failed to export passwords. Please try again.");
-                }
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const email = localStorage.getItem("currentUserEmail");
+          const entries = results.data.map((entry) => ({
+            service:
+              entry.service || entry.website || entry.url || "Not provided",
+            username: entry.username || entry.email || "Not provided",
+            password: entry.password || entry.pass || "Not provided",
+            password_id: crypto.randomUUID(),
+          }));
+          let importSuccess = 0;
+          let importFail = 0;
+          entries.forEach((entry) => {
+            window.electron.send("store-password", {
+              email,
+              serviceName: entry.service,
+              serviceUsername: entry.username,
+              servicePassword: entry.password,
+              password_id: entry.password_id,
             });
-        });
-    }
+            window.electron.once("storePassword-response", (response) => {
+              if (response === "success") {
+                importSuccess++;
+              } else {
+                importFail++;
+              }
+              if (importSuccess + importFail === entries.length) {
+                alert(
+                  importSuccess + " password(s) were successfully imported."
+                );
+                console.log(
+                  `${importSuccess} passwords imported, ${importFail} failed to import.`
+                );
+              }
+            });
+          });
+        },
+      });
+    });
+  }
+
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      const current = localStorage.getItem("currentUserEmail");
+      window.electron.send("get-passwords", { email: current });
+      window.electron.on("get-passwords-response", (response) => {
+        if (!response || response.length === 0) {
+          alert("No passwords to export.");
+          return;
+        }
+        try {
+          const csvData = Papa.unparse(
+            response.map((password) => ({
+              service: password.service,
+              username: password.username,
+              password: password.password,
+            }))
+          );
+          const blob = new Blob([csvData], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "GateKeep_passwords.csv";
+          a.click();
+        } catch (error) {
+          console.error("Error parsing passwords:", error);
+          alert("Failed to export passwords. Please try again.");
+        }
+      });
+    });
+  }
 });
 
 document.body.addEventListener("click", (e) => {
-    const anchor = e.target.closest("a.external-link");
-    if (anchor) {
-      e.preventDefault();
-      const targetUrl = anchor.getAttribute("data-href");
-        window.open(targetUrl, "_blank");
-    }
-  });
+  const anchor = e.target.closest("a.external-link");
+  if (anchor) {
+    e.preventDefault();
+    const targetUrl = anchor.getAttribute("data-href");
+    window.open(targetUrl, "_blank");
+  }
+});
