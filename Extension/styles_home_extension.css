@@ -193,3 +193,29 @@ header {
 .close-btn:hover {
   color: #00bfff;
 }
+
+#logout {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 30px auto;
+  padding: 12px 20px;
+  width: 200px;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #00ffe1;
+  color: #000;
+  font-size: 1em;
+  font-family: "Orbitron", sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px #00ffe1;
+}
+
+#logout:hover {
+  background: #00ffaa;
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 0 15px #00ffc3, 0 0 20px #00ffaa;
+}

@@ -12,6 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById("openPasswordPopup").addEventListener("click", () => {
+      if (
+        document.getElementById("siteName") &&
+        document.getElementById("userEmail") &&
+        document.getElementById("generatedPassword")
+      ) {
+        document.getElementById("siteName").value = "";
+        document.getElementById("userEmail").value = "";
+        document.getElementById("generatedPassword").value = "";
+      }
       document.getElementById("passwordPopup").style.display = "block"
     })
 
