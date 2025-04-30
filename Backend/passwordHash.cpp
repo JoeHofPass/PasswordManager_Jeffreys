@@ -31,7 +31,6 @@ int encrypt(const unsigned char *plaintext, size_t plaintextLen, unsigned char *
 {
     unsigned char nonce[NONCE_BYTES];
     randombytes_buf(nonce, sizeof(nonce));
-    //size_t ciphertextLen = plaintextLen + crypto_aead_aegis256_ABYTES;
     unsigned char *ciphertext = ciphertext_withNonce + NONCE_BYTES;
     memcpy(ciphertext_withNonce, nonce, NONCE_BYTES);
 

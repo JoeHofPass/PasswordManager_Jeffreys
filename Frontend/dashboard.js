@@ -208,7 +208,7 @@ function saveNewPassword() {
       </div>
     `;
     const passwordField = newAccount.querySelector(".password-field");
-    passwordField.dataset.realPassword = password.password;
+    passwordField.dataset.realPassword = password;
 
     const logo = newAccount.querySelector(".site-logo");
     logo.addEventListener("click", () => {

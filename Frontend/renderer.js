@@ -420,3 +420,10 @@ document.body.addEventListener("click", (e) => {
     window.open(targetUrl, "_blank");
   }
 });
+
+if(window.electron){
+  window.electron.on("app-logout", () => {
+    logout();
+    console.log("Logout event received from main process.");
+  });
+}
