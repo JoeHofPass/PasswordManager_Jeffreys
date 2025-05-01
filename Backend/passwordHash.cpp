@@ -11,7 +11,7 @@ using namespace std;
 using json = nlohmann::json;
 
 
-#define DB_CONN ""
+#define DB_CONN "" 
 
 #define SALT_BYTES crypto_pwhash_SALTBYTES
 #define KEY_BYTES crypto_aead_aegis256_KEYBYTES
