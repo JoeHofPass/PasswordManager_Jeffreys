@@ -10,8 +10,8 @@
 using namespace std;
 using json = nlohmann::json;
 
-//#define DB_CONN "dbname=GateKeep user=postgres password=IntersteLL@r_@5201 host=localhost port=5433"
-#define DB_CONN "dbname=GateKeep user=teamuser password=IntersteLL@r_@5202 host=database-1.c3yyqymmofip.us-east-2.rds.amazonaws.com port=5432"
+
+#define DB_CONN ""
 
 #define SALT_BYTES crypto_pwhash_SALTBYTES
 #define KEY_BYTES crypto_aead_aegis256_KEYBYTES
